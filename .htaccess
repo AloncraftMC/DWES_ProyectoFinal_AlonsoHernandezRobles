@@ -1,0 +1,7 @@
+# Activar el módulo mod_rewrite
+RewriteEngine On
+
+# Redirigir todas las peticiones al archivo index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.php [QSA,L]
