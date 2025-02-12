@@ -37,23 +37,34 @@
         
         }
 
-        public function consulta($sql){
-            $this->resultado = $this->conexion->query($sql);
+        public function ejecutar($sql, $parametros = []){
+
+            try{
+
+                $this->resultado = $this->conexion->prepare($sql);
+                $this->resultado->execute($parametros);
+
+            }catch(PDOException $e){
+
+                echo $e->getMessage();
+
+            }
+
         }
 
-        public function siguienteRegistro(){
+        public function getSiguienteRegistro(){
             return $this->resultado->fetch();
         }
 
-        public function todosRegistros(){
+        public function getRegistros(){
             return $this->resultado->fetchAll();
         }
 
-        public function numeroRegistros(){
+        public function getNumeroRegistros(){
             return $this->resultado->rowCount();
         }
 
-        public function ultimoId(){
+        public function getUltimoId(){
             return $this->conexion->lastInsertId();
         }
 
