@@ -6,18 +6,18 @@
 
     class Pedido{
 
-        private $id;
-        private $usuarioId;
-        private $provincia;
-        private $localidad;
-        private $direccion;
-        private $coste;
-        private $estado;
-        private $fecha;
-        private $hora;
-        private $baseDatos;
+        private int $id;
+        private int $usuarioId;
+        private string $provincia;
+        private string $localidad;
+        private string $direccion;
+        private float $coste;
+        private string $estado;
+        private string $fecha;
+        private string $hora;
+        private BaseDatos $baseDatos;
 
-        public function __construct($id, $usuarioId, $provincia, $localidad, $direccion, $coste, $estado, $fecha, $hora){
+        public function __construct(int $id, int $usuarioId, string $provincia, string $localidad, string $direccion, float $coste, string $estado, string $fecha, string $hora){
 
             $this->id = $id;
             $this->usuarioId = $usuarioId;
@@ -32,75 +32,75 @@
 
         }
 
-        public function getId(){
+        public function getId(): int{
             return $this->id;
         }
 
-        public function getUsuarioId(){
+        public function getUsuarioId(): int{
             return $this->usuarioId;
         }
 
-        public function getProvincia(){
+        public function getProvincia(): string{
             return $this->provincia;
         }
 
-        public function getLocalidad(){
+        public function getLocalidad(): string{
             return $this->localidad;
         }
 
-        public function getDireccion(){
+        public function getDireccion(): string{
             return $this->direccion;
         }
 
-        public function getCoste(){
+        public function getCoste(): float{
             return $this->coste;
         }
 
-        public function getEstado(){
+        public function getEstado(): string{
             return $this->estado;
         }
 
-        public function getFecha(){
+        public function getFecha(): string{
             return $this->fecha;
         }
 
-        public function getHora(){
+        public function getHora(): string{
             return $this->hora;
         }
 
-        public function setId($id){
+        public function setId(int $id): void{
             $this->id = $id;
         }
 
-        public function setUsuarioId($usuarioId){
+        public function setUsuarioId(int $usuarioId): void{
             $this->usuarioId = $usuarioId;
         }
 
-        public function setProvincia($provincia){
+        public function setProvincia(string $provincia): void{
             $this->provincia = $provincia;
         }
 
-        public function setLocalidad($localidad){
+        public function setLocalidad(string $localidad): void{
             $this->localidad = $localidad;
         }
 
-        public function setDireccion($direccion){
+        public function setDireccion(string $direccion): void{
             $this->direccion = $direccion;
         }
 
-        public function setCoste($coste){
+        public function setCoste(float $coste): void{
             $this->coste = $coste;
         }
 
-        public function setEstado($estado){
+        public function setEstado(string $estado): void{
             $this->estado = $estado;
         }
 
-        public function setFecha($fecha){
+        public function setFecha(string $fecha): void{
             $this->fecha = $fecha;
         }
 
-        public function setHora($hora){
+        public function setHora(string $hora): void{
             $this->hora = $hora;
         }
         

@@ -16,24 +16,30 @@
             $this->baseDatos = new BaseDatos();
         }
 
-        public function create($categoria){
+        // Insertamos una nueva categoría con nombre en la base de datos
+
+        public function insert(string $nombre): void{
             
             $this->baseDatos->ejecutar('INSERT INTO categorias (nombre) VALUES (:nombre)', [
-                ':nombre' => $categoria->getNombre()
+                ':nombre' => $nombre
             ]);
 
         }
 
-        public function update($categoria){
+        // Modificamos el nombre de una categoría en base a un id
+
+        public function update(int $id, string $nombre): void{
 
             $this->baseDatos->ejecutar('UPDATE categorias SET nombre = :nombre WHERE id = :id', [
-                ':nombre' => $categoria->getNombre(),
-                ':id' => $categoria->getId()
+                ':id' => $id,
+                ':nombre' => $nombre
             ]);
 
         }
 
-        public function delete($id){
+        // Eliminamos una categoría en base a un id
+
+        public function delete(int $id): void{
 
             $this->baseDatos->ejecutar('DELETE FROM categorias WHERE id = :id', [
                 ':id' => $id
@@ -41,7 +47,9 @@
 
         }
 
-        public function getCategoriaById($id){
+        // Seleccionamos una categoría en base a un id
+
+        public function selectCategoriaById(int $id): ?Categoria{
 
             $categoria = null;
 
@@ -59,7 +67,9 @@
 
         }
 
-        public function getCategorias(){
+        // Seleccionamos todas las categorías
+
+        public function selectCategorias(): array{
 
             $categorias = [];
 

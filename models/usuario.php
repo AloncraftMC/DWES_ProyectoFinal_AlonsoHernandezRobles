@@ -6,15 +6,15 @@
 
     class Usuario{
 
-        private $id;
-        private $nombre;
-        private $apellidos;
-        private $email;
-        private $password;
-        private $rol;
-        private $baseDatos;
+        private int $id;
+        private string $nombre;
+        private string $apellidos;
+        private string $email;
+        private string $password;
+        private string $rol;
+        private BaseDatos $baseDatos;
 
-        public function __construct($id, $nombre, $apellidos, $email, $password, $rol){
+        public function __construct(int $id, string $nombre, string $apellidos, string $email, string $password, string $rol){
 
             $this->id = $id;
             $this->nombre = $nombre;
@@ -25,52 +25,52 @@
             $this->baseDatos = new BaseDatos();
 
         }
-
-        public function getId(){
+        
+        public function getId(): int{
             return $this->id;
         }
 
-        public function getNombre(){
+        public function getNombre(): string{
             return $this->nombre;
         }
 
-        public function getApellidos(){
+        public function getApellidos(): string{
             return $this->apellidos;
         }
 
-        public function getEmail(){
+        public function getEmail(): string{
             return $this->email;
         }
 
-        public function getPassword(){
+        public function getPassword(): string{
             return $this->password;
         }
 
-        public function getRol(){
+        public function getRol(): string{
             return $this->rol;
         }
 
-        public function setId($id){
+        public function setId(int $id): void{
             $this->id = $id;
         }
-
-        public function setNombre($nombre){
+        
+        public function setNombre(string $nombre): void{
             $this->nombre = $nombre;
         }
 
-        public function setApellidos($apellidos){
+        public function setApellidos(string $apellidos): void{
             $this->apellidos = $apellidos;
         }
 
-        public function setEmail($email){
+        public function setEmail(string $email): void{
             $this->email = $email;
         }
 
-        public function setPassword($password){
+        public function setPassword(string $password): void{
             $this->password = $password;
         }
 
-        public function setRol($rol){
+        public function setRol(string $rol): void{
             $this->rol = $rol;
         }
         

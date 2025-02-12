@@ -5,11 +5,11 @@
 
     class Categoria{
 
-        private $id;
-        private $nombre;
-        private $baseDatos;
+        private int $id;
+        private string $nombre;
+        private BaseDatos $baseDatos;
 
-        public function __construct($id, $nombre){
+        public function __construct(int $id, string $nombre){
 
             $this->id = $id;
             $this->nombre = $nombre;
@@ -17,19 +17,19 @@
 
         }
         
-        public function getId(){
+        public function getId(): int{
             return $this->id;
         }
 
-        public function getNombre(){
+        public function getNombre(): string{
             return $this->nombre;
         }
 
-        public function setId($id){
+        public function setId(int $id): void{
             $this->id = $id;
         }
 
-        public function setNombre($nombre){
+        public function setNombre(string $nombre): void{
             $this->nombre = $nombre;
         }
 

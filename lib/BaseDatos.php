@@ -4,16 +4,17 @@
 
     use PDO;
     use PDOException;
+    use PDOStatement;
 
     class BaseDatos{
 
-        private $servidor;
-        private $usuario;
-        private $contrasena;
-        private $baseDatos;
+        private string $servidor;
+        private string $usuario;
+        private string $contrasena;
+        private string $baseDatos;
 
-        private $conexion;
-        private $resultado;
+        private PDO $conexion;
+        private PDOStatement $resultado;
 
         public function __construct(){
         
@@ -37,7 +38,7 @@
         
         }
 
-        public function ejecutar($sql, $parametros = []){
+        public function ejecutar(string $sql, array $parametros = []): void{
 
             try{
 
@@ -52,19 +53,19 @@
 
         }
 
-        public function getSiguienteRegistro(){
+        public function getSiguienteRegistro(): ?array{
             return $this->resultado->fetch();
         }
 
-        public function getRegistros(){
+        public function getRegistros(): array{
             return $this->resultado->fetchAll();
         }
 
-        public function getNumeroRegistros(){
+        public function getNumeroRegistros(): int{
             return $this->resultado->rowCount();
         }
 
-        public function getUltimoId(){
+        public function getUltimoId(): string{
             return $this->conexion->lastInsertId();
         }
 
