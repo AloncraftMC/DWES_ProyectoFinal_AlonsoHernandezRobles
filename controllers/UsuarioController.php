@@ -6,6 +6,10 @@
 
 
 
+        public function index(){
+            echo "Controlador Usuario, Acción index";
+        }
+
         public function login(){
 
             
