@@ -10,7 +10,7 @@
 
     class PedidoRepository{
 
-        private $baseDatos;
+        private BaseDatos $baseDatos;
 
         public function __construct(){
             $this->baseDatos = new BaseDatos();
