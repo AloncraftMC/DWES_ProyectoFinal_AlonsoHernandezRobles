@@ -15,7 +15,6 @@
         private string $estado;
         private string $fecha;
         private string $hora;
-        private BaseDatos $baseDatos;
 
         public function __construct(int $id, int $usuarioId, string $provincia, string $localidad, string $direccion, float $coste, string $estado, string $fecha, string $hora){
 
@@ -28,7 +27,6 @@
             $this->estado = $estado;
             $this->fecha = $fecha;
             $this->hora = $hora;
-            $this->baseDatos = new BaseDatos();
 
         }
 

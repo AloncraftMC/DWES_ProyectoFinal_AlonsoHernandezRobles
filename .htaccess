@@ -1,7 +1,13 @@
-# Activar el módulo mod_rewrite
-RewriteEngine On
+<IfModule mod_rewrite.c>
 
-# Redirigir todas las peticiones al archivo index.php
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^ index.php [QSA,L]
+    # Activar el módulo mod_rewrite
+    RewriteEngine On
+    ErrorDocument 404 http://localhost/DWES/Proyecto%20Final%20DWES/error/
+
+    # Redirigir todas las peticiones al archivo index.php
+    RewriteCond %{SCRIPT_FILENAME} !-d
+    RewriteCond %{SCRIPT_FILENAME} !-f
+
+    RewriteRule ^(.*)/(.*) index.php?controller=$1&action=$2
+
+</IfModule>

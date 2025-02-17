@@ -15,7 +15,6 @@
         private string $oferta;
         private string $fecha;
         private string $imagen;
-        private BaseDatos $baseDatos;
 
         public function __construct(int $id, int $categoriaId, string $nombre, string $descripcion, float $precio, int $stock, string $oferta, string $fecha, string $imagen){
 
@@ -28,7 +27,6 @@
             $this->oferta = $oferta;
             $this->fecha = $fecha;
             $this->imagen = $imagen;
-            $this->baseDatos = new BaseDatos();
 
         }
 

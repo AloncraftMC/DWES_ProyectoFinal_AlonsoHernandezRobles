@@ -12,7 +12,6 @@
         private string $email;
         private string $password;
         private string $rol;
-        private BaseDatos $baseDatos;
 
         public function __construct(int $id, string $nombre, string $apellidos, string $email, string $password, string $rol){
 
@@ -22,7 +21,6 @@
             $this->email = $email;
             $this->password = $password;
             $this->rol = $rol;
-            $this->baseDatos = new BaseDatos();
 
         }
         

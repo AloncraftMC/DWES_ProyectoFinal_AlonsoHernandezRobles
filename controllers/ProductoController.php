@@ -7,7 +7,7 @@
 
 
         public function index(){
-            echo "Controlador Producto, Acción index";
+            require_once 'views/producto/destacados.php';
         }
         
     }

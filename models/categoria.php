@@ -7,13 +7,11 @@
 
         private int $id;
         private string $nombre;
-        private BaseDatos $baseDatos;
 
         public function __construct(int $id, string $nombre){
 
             $this->id = $id;
             $this->nombre = $nombre;
-            $this->baseDatos = new BaseDatos();
 
         }
         
