@@ -1,3 +1,5 @@
 .env
 assets/css/style.css
-views/layout/*
+views/layout/footer.php
+views/layout/header.php
+views/layout/navbar.php
