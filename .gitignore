@@ -2,4 +2,4 @@
 assets/css/style.css
 views/layout/footer.php
 views/layout/header.php
-views/layout/navbar.php
+views/layout/sidebar.php
