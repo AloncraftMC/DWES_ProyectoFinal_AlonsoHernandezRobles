@@ -6,6 +6,8 @@
     use PDOException;
     use PDOStatement;
 
+    require_once 'config.php';
+
     class BaseDatos{
 
         private string $servidor;
@@ -16,14 +18,16 @@
         private PDO $conexion;
         private PDOStatement $resultado;
 
+        // Constructor de la base de datos
+
         public function __construct(){
         
             try{
 
-                $this->servidor = $_ENV['DB_HOST'];
-                $this->usuario = $_ENV['DB_USER'];
-                $this->contrasena = $_ENV['DB_PASSWORD'];
-                $this->baseDatos = $_ENV['DB_NAME'];
+                $this->servidor = DB_HOST;
+                $this->usuario = DB_USER;
+                $this->contrasena = DB_PASSWORD;
+                $this->baseDatos = DB_NAME;
 
                 $this->conexion = new PDO("mysql:host=$this->servidor;dbname=$this->baseDatos", $this->usuario, $this->contrasena);
 
@@ -37,6 +41,8 @@
             }
         
         }
+
+        // Método para ejecutar una consulta con parámetros opcionales
 
         public function ejecutar(string $sql, array $parametros = []): void{
 
@@ -52,6 +58,10 @@
             }
 
         }
+
+        /*
+        * Métodos para obtener resultados de la base de datos
+        */
 
         public function getSiguienteRegistro(): ?array{
             return $this->resultado->fetch();

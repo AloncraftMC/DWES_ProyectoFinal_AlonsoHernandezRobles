@@ -1,11 +1,15 @@
 <?php
 
+    session_start();
+
     // Requiero el autoload para cargar las clases y el header y sidebar
 
     use controllers\ErrorController;
 
     require_once 'autoload.php';
+    require_once 'lib/BaseDatos.php';
     require_once 'config/parameters.php';
+    require_once 'helpers/Utils.php';
     require_once 'views/layout/header.php';
     require_once 'views/layout/sidebar.php';
 
@@ -15,7 +19,7 @@
 
         $error = new ErrorController();
         $error->index();
-
+    
     }
 
     // Compruebo si existe el controlador y la acción en la URL

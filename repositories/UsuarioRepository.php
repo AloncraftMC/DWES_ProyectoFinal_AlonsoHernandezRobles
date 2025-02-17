@@ -16,16 +16,17 @@
             self::$baseDatos = new BaseDatos();
         }
 
-        // Insertamos un nuevo usuario con nombre, apellidos, email, password y rol en la base de datos
+        // Insertamos un nuevo usuario con nombre, apellidos, email, password, rol e imagen en la base de datos
 
-        public static function insert(string $nombre, string $apellidos, string $email, string $password, string $rol): void{
+        public static function insert(string $nombre, string $apellidos, string $email, string $password, string $rol, string $imagen): void{
             
-            self::$baseDatos->ejecutar('INSERT INTO usuarios (nombre, apellidos, email, password, rol) VALUES (:nombre, :apellidos, :email, :password, :rol)', [
+            self::$baseDatos->ejecutar('INSERT INTO usuarios (nombre, apellidos, email, password, rol) VALUES (:nombre, :apellidos, :email, :password, :rol, :imagen)', [
                 ':nombre' => $nombre,
                 ':apellidos' => $apellidos,
                 ':email' => $email,
                 ':password' => $password,
-                ':rol' => $rol
+                ':rol' => $rol,
+                ':imagen' => $imagen
             ]);
 
         }
@@ -68,7 +69,7 @@
             $registro = self::$baseDatos->getSiguienteRegistro();
 
             if($registro !== false){
-                $usuario = new Usuario($registro['id'], $registro['nombre'], $registro['apellidos'], $registro['email'], $registro['password'], $registro['rol']);
+                $usuario = new Usuario($registro['id'], $registro['nombre'], $registro['apellidos'], $registro['email'], $registro['password'], $registro['rol'], $registro['imagen']);
             }
 
             return $usuario;
@@ -86,7 +87,7 @@
             $registros = self::$baseDatos->getRegistros();
 
             foreach($registros as $registro){
-                $usuarios[] = new Usuario($registro['id'], $registro['nombre'], $registro['apellidos'], $registro['email'], $registro['password'], $registro['rol']);
+                $usuarios[] = new Usuario($registro['id'], $registro['nombre'], $registro['apellidos'], $registro['email'], $registro['password'], $registro['rol'], $registro['imagen']);
             }
 
             return $usuarios;

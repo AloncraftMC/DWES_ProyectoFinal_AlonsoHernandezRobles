@@ -15,8 +15,8 @@
 
         // Creamos un nuevo usuario con nombre, apellidos, email, password y rol
 
-        public static function create(string $nombre, string $apellidos, string $email, string $password, string $rol): void{
-            self::$usuarioRepository->insert($nombre, $apellidos, $email, $password, $rol);
+        public static function create(string $nombre, string $apellidos, string $email, string $password, string $rol, string $imagen): void{
+            self::$usuarioRepository->insert($nombre, $apellidos, $email, $password, $rol, $imagen);
         }
 
         // Actualizamos un usuario en base a un id con nombre, apellidos, email, password y rol
