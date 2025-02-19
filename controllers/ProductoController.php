@@ -6,8 +6,8 @@
 
 
 
-        public function index(){
-            require_once 'views/producto/destacados.php';
+        public function index(): void{
+            echo "Controlador Producto, Acción index";
         }
         
     }

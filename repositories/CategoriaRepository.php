@@ -5,9 +5,6 @@
     use lib\BaseDatos;
     use models\Categoria;
 
-    use PDO;
-    use PDOException;
-
     class CategoriaRepository{
 
         private static BaseDatos $baseDatos;
@@ -16,12 +13,12 @@
             self::$baseDatos = new BaseDatos();
         }
 
-        // Insertamos una nueva categoría con nombre en la base de datos
+        // Insertamos una nueva categoría en la base de datos
 
-        public static function insert(string $nombre): void{
+        public static function insert(Categoria $categoria): void{
             
             self::$baseDatos->ejecutar('INSERT INTO categorias (nombre) VALUES (:nombre)', [
-                ':nombre' => $nombre
+                ':nombre' => $categoria->getNombre()
             ]);
 
         }

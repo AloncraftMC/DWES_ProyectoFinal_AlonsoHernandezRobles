@@ -4,7 +4,7 @@
 
         // Método para eliminar sesiones
 
-        public static function eliminarSesion($nombre){
+        public static function eliminarSesion($nombre): void{
 
             if(isset($_SESSION[$nombre])){
 
@@ -13,8 +13,8 @@
 
             }
 
-            return $nombre;
-
         }
 
     }
+
+?>

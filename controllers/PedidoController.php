@@ -6,13 +6,13 @@
 
 
 
-        public function index(){
+        public function index(): void{
             echo "Controlador Pedido, Acción index";
         }
 
         public function gestionar(){
 
-                        
+            
 
         }
         

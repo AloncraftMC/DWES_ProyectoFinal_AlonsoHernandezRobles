@@ -6,7 +6,7 @@
 
 
 
-        public function index(){
+        public function index(): void{
             echo "Controlador Categoria, Acción index";
         }
         
