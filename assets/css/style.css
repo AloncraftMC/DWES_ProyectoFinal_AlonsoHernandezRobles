@@ -1,289 +1,203 @@
-/* Estilos generales */
+@font-face{
+    font-family: 'Rubik';
+    src: url('../fonts/Rubik-Regular.ttf') format('truetype');
+}
 
 *{
-    padding: 0px;
-    margin: 0px;
-    font-family: sans-serif, Helvetica, Arial;
+    font-family: 'Rubik', sans-serif;
 }
 
-a{
-    color: #01B1EA;
+body{
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
-a:visited{
-    color: #01B1EA;
+/* HEADER */
+
+header{
+    flex-shrink: 0;
+    background-color: rgb(24, 100, 175);
+    color: white;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 5px dashed white;
 }
 
-a:hover{
-    color: #555555;
+.header-izquierda{
+    
+    display: flex;
+    flex-direction: row;
+    text-shadow: 2px 2px 2px rgba(0,0,0,0.5);
+    transition: 0.2s;
+    
+    img{
+        width: 50px;
+        height: 50px;
+        margin: 10px;
+    }
+
+    a{
+        text-decoration: none;
+        color: white;
+    }
+
+    &:hover{
+        transform: scale(1.01);
+        text-shadow: 5px 5px 5px rgba(0,0,0,0.5);
+        filter: saturate(1.5);
+    }
+    
 }
 
-.alert_green{
-    color: green;
+.header-derecha{
+
+    display: flex;
+    flex-direction: row;
+
+    a{
+
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
+        background-color: white;
+        color: black;
+        border: 0px;
+        border-radius: 20px;
+        margin: 10px;
+        font-size: large;
+        padding: 10px;
+        transition: 0.5s;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+
+        button{
+
+            background-color: transparent;
+            border: 0px;
+            color: black;
+            font-size: large;
+            padding: 10px;
+            transition: 0.5s;
+
+            &:hover{
+                filter: brightness(0.75);
+                cursor: pointer;
+            }
+
+        }
+
+        &:hover{
+            filter: brightness(0.75);
+            cursor: pointer;
+        }
+
+    }
+
 }
 
-.alert_red{
-    color: red;
-}
+/* MAIN */
 
-/* Container */
-
-#container{
-    width: 80%;
-    margin: 0px auto;
-    box-shadow: 0px 0px 10px gray;
-    background: white;
-}
-
-/* Header */
-
-#header{
-    height: 145px;
-    background: #F0F0F0;
-}
-
-#logo{
+main{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
-    margin-left: 20px;
-    float: left;
+    background-color: rgb(202, 230, 255);
 }
 
-#logo img{
-    float: left;
-    height: 100px;
-}
+/* FOOTER */
 
-#logo a{
-    float: left;
-    font-size: 30px;
-    letter-spacing: 4px;
-    font-family: 'Open Sans', Helvetica, Arial;
-    text-transform: uppercase;
-    color: #01B1EA;
-    font-weight: bold;
-    text-decoration: none;
-    margin-top: 18px;
-    margin-left: 25px;
-    text-shadow: 0px 2px 1px #222222;
-    transition: all 0.3s;
-}
-
-#logo a:hover{
-    text-shadow: 0px 2px 1px #222222, 0px 0px 4px #01B1EA;
-}
-
-/* Menú */
-
-#menu{
-    clear: both;
-    background: #222;
+footer{
+    flex-shrink: 0;
+    background-color: darkslategray;
     color: white;
-    height: 55px;
-    border-bottom: 4px solid #01B1EA;
-}
-
-#menu ul{
-    list-style: none;
-    text-decoration: none;
-    margin: 0px auto;
-    margin-left: 25px;
-}
-
-#menu ul li{
-    line-height: 55px;
-    float: left;
-    border-right: 1px solid #363636;
-}
-
-#menu a{
-    display: block;
-    color: white;
-    text-decoration: none;
-    padding-left: 12px;
-    padding-right: 12px;
-    transition: all 0.3s;
-}
-
-#menu a:first-child{
-    border-left: 1px solid #363636;
-}
-
-#menu a:hover{
-    background: #01B1EA;
-}
-
-/* Content */
-
-#content{
-    margin: 0px auto;
-    overflow: hidden;
-    background-color: white;
-}
-
-/* Barra lateral */
-
-#lateral{
-    width: 22%;
-    min-height: 500px;
-    float: left;
-    margin-top: 20px;
-    margin-left: 10px;
-}
-
-#lateral .block_aside{
-    display: block;
-    width: 90%;
-    margin: 5px auto;
+    text-align: center;
     padding: 10px;
 }
 
-#lateral h3{
-    display: block;
-    color: #222;
-    width: 100%;
-    text-align: center;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    margin-bottom: 15px;
-    font-size: 16px;
-    font-weight: bold;
-    background: #E1E1E1;
-    border-bottom: 2px solid #01B1EA;
+/* REGISTRARSE */
+
+form {
+
+    border-radius: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    width: 40%; /* Ajustamos el tamaño */
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Espaciado entre elementos */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+
+    div {
+
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding-right: 10px;
+
+        label {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+
+            width: 95%;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+
+            &:focus {
+                border-color: rgb(24, 100, 175);
+                outline: none;
+            }
+
+        }
+
+    }
+
+    button {
+
+        margin-top: 20px;
+        width: 100%;
+        padding: 12px;
+        background-color: rgb(24, 100, 175);
+        color: white;
+        font-size: 1.1em;
+        font-weight: bold;
+        border: none;
+        border-radius: 10px;
+        transition: background 0.3s;
+
+        &:hover {
+            background-color: rgb(18, 80, 140);
+            cursor: pointer;
+        }
+
+    }
+
 }
 
-#lateral ul{
+/* MENSAJES DE ERROR / ÉXITO */
+
+strong{
     margin-top: 20px;
-    margin-bottom: 20px;
+    font-size: x-large;
 }
 
-#lateral ul li{
-    list-style: square;
-    margin-left: 20px;
-    margin-top: 5px;
-    margin-bottom: 5px;
+.green{
+    color: rgb(0, 172, 0);
 }
 
-/* Forms */
-
-label,
-input[type="text"],
-input[type="password"],
-input[type="email"],
-select{
-    display: block;
-    width: 95%;
-    margin-top: 2px;
-    margin-bottom: 2px;
-}
-
-input[type="text"],
-input[type="password"],
-input[type="email"],
-select{
-    border: 1px solid #C9C9C9;
-    box-shadow: 0px 0px 2px #CCC inset;
-    background: white;
-    padding: 2px;
-    color: gray;
-    transition: all 0.3s;
-}
-
-input[type="text"]:focus,
-input[type="password"]:focus,
-input[type="email"]:focus,
-select:focus{
-    border: 1px solid #1579B5;
-    color: black;
-}
-
-input[type="button"],
-input[type="submit"],
-button,
-.button{
-    display: block;
-    border-radius: 2px;
-    width: auto;
-    padding: 5px;
-    padding-left: 10px;
-    padding-right: 10px;
-    color: white;
-    background: #2979CD;
-    border: 1px solid #11608E;
-    cursor: pointer;
-}
-
-.button{
-    background-color: #33AE3D;
-    color: white !important;
-    text-decoration: none;
-
-}
-
-label,
-input[type="button"],
-input[type="submit"],
-select{
-    display: block;
-    margin-top: 10px;
-}
-
-/* Central */
-
-#central{
-    width: 72%;
-    min-height: 500px;
-    float: right;
-    border-left: 1px solid #CCC;
-    box-shadow: -5px -1px 5px #DDD;
-    padding: 25px;
-}
-
-#central h1{
-    font-size: 25px;
-    font-weight: normal;
-    letter-spacing: 1px;
-    text-align: center;
-    border-bottom: 1px solid #CCC;
-    margin-top: 10px;
-    margin-bottom: 20px;
-    padding: 20px;
-    padding-top: 0px;
-}
-
-/* Productos */
-
-.product{
-    width: 30%;
-    float: left;
-    margin-left: 10px;
-    margin-right: 10px;
-    text-align: center;
-}
-
-.product img{
-    width: 100px;
-    margin-bottom: 10px;
-}
-
-.product h2{
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.product p{
-    font-weight: bold;
-    color: #555;
-    margin-bottom: 10px;
-}
-
-/* Footer */
-
-#footer{
-    clear: both;
-    text-align: center;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    color: white;
-    background-color: #222222;
-    border-top: 5px solid #01B1EA;
+.red{
+    color: red;
 }

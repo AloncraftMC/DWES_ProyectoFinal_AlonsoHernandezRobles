@@ -32,7 +32,7 @@
 
     }elseif(!isset($_GET['controller']) && !isset($_GET['action'])){
         
-        $nombre_controlador = 'controllers\\' . controller_default . 'Controller';
+        $nombre_controlador = 'controllers\\' . CONTROLLER_DEFAULT . 'Controller';
         
     }else{
 
@@ -59,7 +59,7 @@
 
         }elseif(!isset($_GET['controller']) && !isset($_GET['action'])){
         
-            $action_default = action_default;
+            $action_default = ACTION_DEFAULT;
             $controlador->$action_default();
             
         }else{
@@ -79,3 +79,5 @@
     // Requiero el footer
     
     require_once 'views/layout/footer.php';
+
+?>

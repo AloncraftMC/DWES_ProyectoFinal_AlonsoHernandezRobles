@@ -9,7 +9,11 @@
 
     // Controlador y acción por defecto
 
-    define('controller_default', 'Producto');
-    define('action_default', 'index');
+    define('CONTROLLER_DEFAULT', 'Producto');
+    define('ACTION_DEFAULT', 'index');
+
+    // Rutas
+
+    define('BASE_URL', 'http://localhost/DWES/Proyecto%20Final%20DWES/');
 
 ?>

@@ -42,7 +42,7 @@
         
         }
 
-        // Método para ejecutar una consulta con parámetros opcionales
+        // Método para ejecutar sentencias SQL con parámetros opcionales
 
         public function ejecutar(string $sql, array $parametros = []): void{
 
