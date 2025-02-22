@@ -16,15 +16,9 @@
 
     require_once 'views/layout/header.php';
 
-    // Función para mostrar errores
-
-    function show_error(){
-        (new ErrorController())->index();
-    }
-
-    // Si existe el controlador por la URL, golfo
-    // Si no existe, se carga el controlador por defecto
-    // Si no existe el controlador por defecto, se muestra un error (never)
+    // 1. Si existe el controlador en la URL, se ejecuta ese
+    // 2. Si no existe el controlador en la URL, ejecutamos el controlador por defecto
+    // 3. Si el controlador no existe, mostramos un error
 
     if(isset($_GET['controller'])){
 
@@ -34,11 +28,10 @@
         
         $nombre_controlador = 'controllers\\' . CONTROLLER_DEFAULT . 'Controller';
         
-    }else{
+    }else{  // Realmente este else no es necesario, pero quizá lo hace más claro el código
 
         echo "Controlador no encontrado";
-        show_error();
-        exit();
+        (new ErrorController())->index();
 
     }
 
@@ -48,9 +41,9 @@
 
         $controlador = new $nombre_controlador();
 
-        // Si existe la acción por la URL, golfo
-        // Si no existe, se carga la acción por defecto
-        // Si no existe la acción por defecto, se muestra un error (never)
+        // 1. Si existe la acción en la URL, se ejecuta esa
+        // 2. Si no existe la acción en la URL, ejecutamos la acción por defecto
+        // 3. Si la acción no existe, mostramos un error
 
         if(isset($_GET['action']) && method_exists($controlador, $_GET['action'])){
 
@@ -64,15 +57,15 @@
             
         }else{
 
-            echo "Acción por defecto no encontrada";
-            show_error();
+            echo "Acción no encontrada";
+            (new ErrorController())->index();
 
         }
 
     }else{
 
         echo "Controlador no encontrado";
-        show_error();
+        (new ErrorController())->index();
 
     }
 

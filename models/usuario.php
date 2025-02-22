@@ -10,7 +10,7 @@
         private string $nombre;
         private string $apellidos;
         private string $email;
-        private string $password;
+        private ?string $password;
         private string $rol;
         private ?string $imagen;
         private BaseDatos $baseDatos;
@@ -37,7 +37,7 @@
             return $this->email;
         }
 
-        public function getPassword(): string{
+        public function getPassword(): ?string{
             return $this->password;
         }
 
@@ -65,7 +65,7 @@
             $this->email = $email;
         }
 
-        public function setPassword(string $password): void{
+        public function setPassword(?string $password): void{
             $this->password = $password;
         }
 
@@ -80,12 +80,14 @@
         /* MÉTODOS */
 
         public function save(): bool{
+
+            // Insertar el usuario en la base de datos
             
             $this->baseDatos->ejecutar("INSERT INTO usuarios VALUES(null, :nombre, :apellidos, :email, :password, 'user', null)", [
                 ':nombre' => $this->nombre,
                 ':apellidos' => $this->apellidos,
                 ':email' => $this->email,
-                ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4]),
+                ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4])
             ]);
 
             return $this->baseDatos->getNumeroRegistros() == 1;
@@ -93,14 +95,20 @@
         }
 
         public function login(): ?Usuario{
+
+            // Buscar el usuario en la base de datos
             
             $this->baseDatos->ejecutar("SELECT * FROM usuarios WHERE email = :email", [
                 ':email' => $this->email,
             ]);
 
+            // Si se encontró un usuario con ese email
+
             if($this->baseDatos->getNumeroRegistros() == 1){
                 
                 $usuario = $this->baseDatos->getSiguienteRegistro();
+
+                // Verificar la contraseña
                 
                 if(password_verify($this->password, $usuario['password'])){
 
@@ -117,6 +125,61 @@
             }
 
             return null;
+
+        }
+
+        public function update(): bool {
+
+            if(strlen($this->password) == 0) $this->password = null;
+
+            if($this->password !== null) {
+
+                // Si se ha introducido una nueva contraseña, se actualiza el campo 'password'
+
+                $query = "UPDATE usuarios 
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email, password = :password 
+                          WHERE id = :id";
+
+                $params = [
+                    ':nombre' => $this->nombre,
+                    ':apellidos' => $this->apellidos,
+                    ':email' => $this->email,
+                    ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4]),
+                    ':id' => $this->id
+                ];
+
+            }else {
+
+                // Si no se ha introducido una nueva contraseña, se actualizan los demás campos sin tocar 'password'
+
+                $query = "UPDATE usuarios 
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email 
+                          WHERE id = :id";
+
+                $params = [
+                    ':nombre' => $this->nombre,
+                    ':apellidos' => $this->apellidos,
+                    ':email' => $this->email,
+                    ':id' => $this->id
+                ];
+            }
+        
+            $this->baseDatos->ejecutar($query, $params);
+        
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+        
+
+        public function delete(): bool{
+
+            // Eliminar el usuario de la base de datos
+
+            $this->baseDatos->ejecutar("DELETE FROM usuarios WHERE id = :id", [
+                ':id' => $this->id
+            ]);
+
+            return $this->baseDatos->getNumeroRegistros() == 1;
 
         }
         

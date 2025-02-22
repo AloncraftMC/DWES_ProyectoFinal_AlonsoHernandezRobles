@@ -25,7 +25,7 @@ header{
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 5px dashed white;
+    border-bottom: 5px rgb(202, 230, 255) dashed;
 }
 
 .header-izquierda{
@@ -65,10 +65,9 @@ header{
         background-color: white;
         color: black;
         border: 0px;
-        border-radius: 20px;
+        border-radius: 15px;
         margin: 10px;
         font-size: large;
-        padding: 10px;
         transition: 0.5s;
         display: flex;
         align-items: center;
@@ -82,10 +81,23 @@ header{
             font-size: large;
             padding: 10px;
             transition: 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             &:hover{
                 filter: brightness(0.75);
                 cursor: pointer;
+            }
+
+            img{
+
+                margin-right: 10px;
+            
+                &.no-margin-right{
+                    margin-right: 0px;
+                }
+            
             }
 
         }
@@ -120,7 +132,7 @@ footer{
     padding: 10px;
 }
 
-/* REGISTRARSE */
+/* FORMULARIOS */
 
 form {
 
@@ -165,39 +177,72 @@ form {
 
     }
 
-    button {
-
+    button, .btn-delete {
         margin-top: 20px;
         width: 100%;
         padding: 12px;
-        background-color: rgb(24, 100, 175);
         color: white;
         font-size: 1.1em;
         font-weight: bold;
         border: none;
         border-radius: 10px;
         transition: background 0.3s;
-
-        &:hover {
-            background-color: rgb(18, 80, 140);
-            cursor: pointer;
-        }
-
+        text-align: center;
+        display: inline-block;
+        text-decoration: none;
+        cursor: pointer;
     }
+    
+    button {
+        background-color: rgb(24, 100, 175);
+    }
+    
+    button:hover {
+        background-color: rgb(18, 80, 140);
+    }
+    
+    .btn-delete {
+        width: 96%;
+        background-color: rgb(200, 0, 0);
+    }
+    
+    .btn-delete:hover {
+        background-color: rgb(150, 0, 0);
+    }
+
+    .btn-delete .hover-text {
+        transition: opacity 0.3s ease;
+    }
+
+    .btn-delete:hover .hover-text {
+        opacity: 0;
+    }
+
+    .btn-delete:hover::after {
+        content: " (¡OJO: Es instantáneo!)";
+        font-weight: bold;
+    }
+
 
 }
 
 /* MENSAJES DE ERROR / ÉXITO */
 
 strong{
+
     margin-top: 20px;
     font-size: x-large;
-}
 
-.green{
-    color: rgb(0, 172, 0);
-}
+    &.green{
+        color: rgb(0, 172, 0);
+    }
 
-.red{
-    color: red;
+    &.yellow{
+        color: rgb(185, 185, 0);
+    }
+    
+    &.red{
+        color: red;
+    }
+
 }

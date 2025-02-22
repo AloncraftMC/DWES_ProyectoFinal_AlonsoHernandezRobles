@@ -1,0 +1,1 @@
+<h1>Administración de Productos</h1>
