@@ -145,6 +145,7 @@ main{
         text-decoration: none;
         cursor: pointer;
         background-color: rgb(24, 100, 175);
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
 
         &:hover {
             background-color: rgb(18, 80, 140);
@@ -394,7 +395,7 @@ table {
     }
 
     .disabled{
-        background-color: rgb(198, 198, 198);
+        background-color: rgb(139, 139, 139);
         cursor: not-allowed;
     }
 
