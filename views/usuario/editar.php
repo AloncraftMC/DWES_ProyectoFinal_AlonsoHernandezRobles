@@ -1,12 +1,18 @@
 <h1 style="margin-bottom: 0px">Editar Usuario</h1>
-<h3><?=$_SESSION['identity']['nombre']?> <?=$_SESSION['identity']['apellidos']?></h3>
 
-<form method="post" action="<?=BASE_URL?>usuario/editar">
+<?php
+    use models\Usuario;
+    $usuario = Usuario::getById($_GET['id']);
+?>
 
+<h3><?=$usuario->getNombre()?> <?=$usuario->getApellidos()?></h3>
+
+<form method="post" action="<?=BASE_URL?>usuario/editar&id=<?=$_GET['id']?>">
+    
     <div class="form-group">
 
         <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" value="<?=$_SESSION['identity']['nombre']?>">
+        <input type="text" name="nombre" value="<?=$usuario->getNombre()?>">
 
         <?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed_nombre'): ?>
 
@@ -16,11 +22,10 @@
 
     </div>
 
-
     <div class="form-group">
 
         <label for="apellidos">Apellidos</label>
-        <input type="text" name="apellidos" value="<?=$_SESSION['identity']['apellidos']?>">
+        <input type="text" name="apellidos" value="<?=$usuario->getApellidos()?>">
 
         <?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed_apellidos'): ?>
 
@@ -30,11 +35,10 @@
 
     </div>
 
-
     <div class="form-group">
 
         <label for="email">Email</label>
-        <input type="email" name="email" value="<?=$_SESSION['identity']['email']?>">
+        <input type="email" name="email" value="<?=$usuario->getEmail()?>">
 
         <?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed_email'): ?>
 
@@ -57,25 +61,27 @@
 
     </div>
 
+    <div class="form-group">
+
+        <label for="rol">Rol</label>
+        <select name="rol">
+            <option value="user" <?=($usuario->getRol() === 'user') ? 'selected' : ''?>>Usuario</option>
+            <option value="admin" <?=($usuario->getRol() === 'admin') ? 'selected' : ''?>>Administrador</option>
+        </select>
+
+    </div>
+
     <button type="submit">Guardar Cambios</button>
-
-    <!-- Eliminar Usuario -->
-
-    <a href="<?=BASE_URL?>usuario/eliminar" class="btn-delete">Eliminar Usuario <span class="hover-text"></span></a>
 
 </form>
 
-<?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'complete'): ?>
+<?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'nothing'): ?>
 
-    <strong class="green">Datos editados correctamente.</strong>
-
-<?php elseif(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'nothing'): ?>
-
-    <strong class="yellow">No se ha modificado ningún dato.</strong>
+<strong class="yellow">No se ha modificado ningún dato.</strong>
 
 <?php elseif(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed'): ?>
 
-    <strong class="red">Edición de datos fallida, introduce bien los datos.</strong>
+<strong class="red">Edición de datos fallida, introduce bien los datos.</strong>
 
 <?php endif; ?>
 

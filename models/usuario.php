@@ -11,7 +11,7 @@
         private string $apellidos;
         private string $email;
         private ?string $password;
-        private string $rol;
+        private ?string $rol;
         private ?string $imagen;
         private BaseDatos $baseDatos;
         
@@ -41,7 +41,7 @@
             return $this->password;
         }
 
-        public function getRol(): string{
+        public function getRol(): ?string{
             return $this->rol;
         }
 
@@ -69,7 +69,7 @@
             $this->password = $password;
         }
 
-        public function setRol(string $rol): void{
+        public function setRol(?string $rol): void{
             $this->rol = $rol;
         }
 
@@ -77,7 +77,7 @@
             $this->imagen = $imagen;
         }
 
-        /* MÉTODOS */
+        /* MÉTODOS DINÁMICOS */
 
         public function save(): bool{
 
@@ -132,13 +132,15 @@
         public function update(): bool {
 
             if(strlen($this->password) == 0) $this->password = null;
+            
+            if(!isset($this->rol)) $this->rol = 'user';
 
             if($this->password !== null) {
 
                 // Si se ha introducido una nueva contraseña, se actualiza el campo 'password'
 
                 $query = "UPDATE usuarios 
-                          SET nombre = :nombre, apellidos = :apellidos, email = :email, password = :password 
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email, password = :password, rol = :rol
                           WHERE id = :id";
 
                 $params = [
@@ -146,6 +148,7 @@
                     ':apellidos' => $this->apellidos,
                     ':email' => $this->email,
                     ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4]),
+                    ':rol' => $this->rol,
                     ':id' => $this->id
                 ];
 
@@ -154,15 +157,17 @@
                 // Si no se ha introducido una nueva contraseña, se actualizan los demás campos sin tocar 'password'
 
                 $query = "UPDATE usuarios 
-                          SET nombre = :nombre, apellidos = :apellidos, email = :email 
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email, rol = :rol
                           WHERE id = :id";
 
                 $params = [
                     ':nombre' => $this->nombre,
                     ':apellidos' => $this->apellidos,
                     ':email' => $this->email,
+                    ':rol' => $this->rol,
                     ':id' => $this->id
                 ];
+
             }
         
             $this->baseDatos->ejecutar($query, $params);
@@ -182,6 +187,8 @@
             return $this->baseDatos->getNumeroRegistros() == 1;
 
         }
+
+        /* MÉTODOS ESTÁTICOS */
 
         public static function getById(int $id): ?Usuario {
 
@@ -232,7 +239,7 @@
             }
         
             return $usuarios;
-        }        
+        }
         
     }
 

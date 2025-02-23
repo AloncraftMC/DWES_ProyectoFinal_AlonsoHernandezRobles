@@ -21,7 +21,7 @@
         <th>Acciones</th>
     </tr>
 
-    <?php foreach(Usuario::getAll() as $usuario): ?>
+    <?php foreach($usuarios as $usuario): ?>
 
         <tr>
 
@@ -29,7 +29,9 @@
             <td><?=$usuario->getNombre()?></td>
             <td><?=$usuario->getApellidos()?></td>
             <td><?=$usuario->getEmail()?></td>
-            <td><?=$usuario->getRol()?></td>
+            
+            <!-- Si el rol es 'user', mostrar 'Usuario', si es 'admin', mostrar 'Administrador' -->
+            <td><?=($usuario->getRol() === 'user') ? 'Usuario' : 'Administrador'?></td>
 
             <td class="acciones">
                 
@@ -50,3 +52,25 @@
     <?php endforeach; ?>
 
 </table>
+
+<div class="paginacion">
+
+    <?php if($totalPag > 1): ?>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=<?= ($_SESSION['pag'] > 1) ? $_SESSION['pag'] - 1 : 1 ?>">
+            <button class="boton <?php if($_SESSION['pag'] == 1) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/left.svg" alt="Página anterior">
+            </button>
+        </a>
+
+        <h1>Pág. <?=$_SESSION['pag']?></h1>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=<?= ($_SESSION['pag'] < $totalPag) ? $_SESSION['pag'] + 1 : $totalPag ?>">
+            <button class="boton <?php if($_SESSION['pag'] == $totalPag) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/right.svg" alt="Página siguiente">
+            </button>
+        </a>
+
+    <?php endif; ?>
+
+</div>

@@ -84,7 +84,18 @@
 
                 if($_SESSION['register'] == 'complete'){
 
-                    header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'admin' : 'registrarse'));
+                    // Si no somos administradores, vamos a registrarse
+                    // Pero si somos administradores, vamos a la administración de usuarios, primero comprobando si $_SESSION['pag'] está seteado
+
+                    if(isset($_SESSION['admin'])){
+
+                        header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        
+                    }else{
+                        
+                        header("Location:" . BASE_URL . "usuario/registrarse");
+
+                    }
 
                 }else{
                     
@@ -173,8 +184,8 @@
 
         public function salir(): void{
 
-            if(isset($_SESSION['identity'])) unset($_SESSION['identity']);
-            if(isset($_SESSION['admin'])) unset($_SESSION['admin']);
+            Utils::deleteSession('identity');
+            Utils::deleteSession('admin');
 
             header("Location:" . BASE_URL);
 
@@ -182,14 +193,16 @@
 
         // Método para gestionar el usuario.
         // Si no hay ninguna id en el GET, se requiere la vista de gestión del usuario. (gestion.php)
-        // Si hay una id en el GET, se muestra la vista de edición del usuario. (editar.php)
+        // Si hay una id en el GET, se muestra la vista de edición del usuario (acción de Admins). (editar.php)
 
         public function gestion(): void{
             
             if(isset($_GET['id'])){
 
                 $id = $_GET['id'];
-                
+
+                Utils::isAdmin();
+
                 if(Usuario::getById($id)){
 
                     require_once 'views/usuario/editar.php';
@@ -222,76 +235,164 @@
                 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : null;
                 $rol = isset($_POST['rol']) ? $_POST['rol'] : null;
+                
+                // Contemplamos dos casos:
+                // 1. Se ha enviado la id por GET y modificamos los datos de ese usuario.
+                // 2. No se ha enviado la id por GET y modificamos los datos del usuario con la sesión iniciada.
 
-                // Si el nombre, apellido o email es distinto al mostrado por los inputs (actuales valores) O la contraseña tiene más de 0 caracteres, es decir, se ha introducido una nueva contraseña, entonces se procede a la validación y actualización de los datos:
+                if(isset($_GET['id'])){
 
-                if($nombre != $_SESSION['identity']['nombre'] || $apellidos != $_SESSION['identity']['apellidos'] || $email != $_SESSION['identity']['email'] || strlen($password) > 0){
+                    Utils::isAdmin();
 
-                    // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
-
-                    if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
-                        $_SESSION['gestion'] = "failed_nombre";
-                        header("Location:" . BASE_URL . "usuario/gestion");
-                        exit;
-                    }
+                    $id = $_GET['id'];
+                    $dummyUsuario = Usuario::getById($id);
                     
-                    // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
-        
-                    if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
-                        $_SESSION['gestion'] = "failed_apellidos";
-                        header("Location:" . BASE_URL . "usuario/gestion");
-                        exit;
-                    }
-        
-                    // Validar email
+                    if($nombre != $dummyUsuario->getNombre() || $apellidos != $dummyUsuario->getApellidos() || $email != $dummyUsuario->getEmail() || strlen($password) > 0 || $rol != $dummyUsuario->getRol()){
 
-                    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                        $_SESSION['gestion'] = "failed_email";
-                        header("Location:" . BASE_URL . "usuario/gestion");
-                        exit;
-                    }
-        
-                    // Validar contraseña (mínimo 8 caracteres, al menos una letra y un número)
+                        // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
+    
+                        if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
+                            $_SESSION['gestion'] = "failed_nombre";
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            exit;
+                        }
+                        
+                        // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
+            
+                        if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
+                            $_SESSION['gestion'] = "failed_apellidos";
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            exit;
+                        }
+            
+                        // Validar email
+    
+                        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            $_SESSION['gestion'] = "failed_email";
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            exit;
+                        }
+            
+                        // Validar contraseña (mínimo 8 caracteres, al menos una letra y un número)
+    
+                        if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
+                            $_SESSION['gestion'] = "failed_password";
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            exit;
+                        }
+    
+                        // Crear objeto Usuario y guardar en BD
+    
+                        $usuario = new Usuario();
+                        $usuario->setId($id);
+                        $usuario->setNombre($nombre);
+                        $usuario->setApellidos($apellidos);
+                        $usuario->setEmail($email);
+                        $usuario->setPassword($password);
+                        $usuario->setRol($rol);
+    
+                        if($usuario->update()){
+    
+                            $_SESSION['gestion'] = "complete";
+                            
+                            if($_SESSION['identity']['id'] == $id){
 
-                    if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
-                        $_SESSION['gestion'] = "failed_password";
-                        header("Location:" . BASE_URL . "usuario/gestion");
-                        exit;
-                    }
+                                $_SESSION['identity']['nombre'] = $nombre;
+                                $_SESSION['identity']['apellidos'] = $apellidos;
+                                $_SESSION['identity']['email'] = $email;
+                                $_SESSION['identity']['rol'] = $rol;
 
-                    // Crear objeto Usuario y guardar en BD
+                                Utils::isAdmin();
 
-                    $usuario = new Usuario();
-                    $usuario->setId($_SESSION['identity']['id']);
-                    $usuario->setNombre($nombre);
-                    $usuario->setApellidos($apellidos);
-                    $usuario->setEmail($email);
-                    $usuario->setPassword($password);
+                            }
+                            
+                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                            exit;
+    
+                        }else{
+    
+                            $_SESSION['gestion'] = "failed";
 
-                    if($rol) $usuario->setRol($rol);
-
-                    if($usuario->update()){
-
-                        $_SESSION['identity']['nombre'] = $nombre;
-                        $_SESSION['identity']['apellidos'] = $apellidos;
-                        $_SESSION['identity']['email'] = $email;
-
-                        $_SESSION['gestion'] = "complete";
+                        }
 
                     }else{
 
-                        $_SESSION['gestion'] = "failed";
+                        $_SESSION['gestion'] = "nothing";
 
                     }
 
+                    header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                    exit;
+
                 }else{
 
-                    $_SESSION['gestion'] = "nothing";
+                    if($nombre != $_SESSION['identity']['nombre'] || $apellidos != $_SESSION['identity']['apellidos'] || $email != $_SESSION['identity']['email'] || strlen($password) > 0){
+
+                        // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
+    
+                        if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
+                            $_SESSION['gestion'] = "failed_nombre";
+                            header("Location:" . BASE_URL . "usuario/gestion");
+                            exit;
+                        }
+                        
+                        // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
+            
+                        if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
+                            $_SESSION['gestion'] = "failed_apellidos";
+                            header("Location:" . BASE_URL . "usuario/gestion");
+                            exit;
+                        }
+            
+                        // Validar email
+    
+                        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                            $_SESSION['gestion'] = "failed_email";
+                            header("Location:" . BASE_URL . "usuario/gestion");
+                            exit;
+                        }
+            
+                        // Validar contraseña (mínimo 8 caracteres, al menos una letra y un número)
+    
+                        if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
+                            $_SESSION['gestion'] = "failed_password";
+                            header("Location:" . BASE_URL . "usuario/gestion");
+                            exit;
+                        }
+    
+                        // Crear objeto Usuario y guardar en BD
+    
+                        $usuario = new Usuario();
+                        $usuario->setId($_SESSION['identity']['id']);
+                        $usuario->setNombre($nombre);
+                        $usuario->setApellidos($apellidos);
+                        $usuario->setEmail($email);
+                        $usuario->setPassword($password);
+    
+                        if($usuario->update()){
+    
+                            $_SESSION['identity']['nombre'] = $nombre;
+                            $_SESSION['identity']['apellidos'] = $apellidos;
+                            $_SESSION['identity']['email'] = $email;
+    
+                            $_SESSION['gestion'] = "complete";
+    
+                        }else{
+    
+                            $_SESSION['gestion'] = "failed";
+    
+                        }
+    
+                    }else{
+    
+                        $_SESSION['gestion'] = "nothing";
+    
+                    }
+                    
+                    header("Location:" . BASE_URL . "usuario/gestion");
+                    exit;
 
                 }
-                
-                header("Location:" . BASE_URL . "usuario/gestion");
-                exit;
 
             }
 
@@ -306,6 +407,8 @@
         public function eliminar(): void {
 
             if(isset($_GET['id'])){
+
+                Utils::isAdmin();
 
                 $id = $_GET['id'];
 
@@ -331,7 +434,7 @@
 
                 }
 
-                header("Location:" . BASE_URL . "usuario/admin");
+                header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
 
             }else{
 
@@ -364,6 +467,23 @@
         public function admin(): void {
             
             Utils::isAdmin();
+
+            $usuariosPorPagina = 5;
+
+            // Aqui seteamos el numero de pagina, y abajo redirigimos a 1 o la última página si la página es menor que 1 o mayor que el total de páginas
+
+            $_SESSION['pag'] = isset($_GET['pag']) ? (int)$_GET['pag'] : 1;
+
+            $usuarios = Usuario::getAll();
+
+            $totalPag = ceil(count($usuarios) / $usuariosPorPagina);
+            $usuarios = array_slice($usuarios, ($_SESSION['pag'] - 1) * $usuariosPorPagina, $usuariosPorPagina);
+
+            // Ahora redirigimos a la primera o última página si la página es menor que 1 o mayor que el total de páginas
+
+            if($_SESSION['pag'] < 1) header("Location:" . BASE_URL . "usuario/admin&pag=1");
+            if($_SESSION['pag'] > $totalPag) header("Location:" . BASE_URL . "usuario/admin&pag=" . $totalPag);
+
             require_once 'views/usuario/admin.php';
 
         }
