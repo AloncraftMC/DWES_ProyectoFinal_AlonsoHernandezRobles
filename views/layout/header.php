@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -83,7 +83,7 @@
                 <?php if (!($controlador_actual === 'usuario' && $accion_actual === 'gestion')): ?>
                     <a href="<?=BASE_URL?>usuario/gestion">
                         <button class="boton">
-                            <img src="<?=BASE_URL?>assets/images/usuario.svg" class="no-margin-right">
+                            <img src="<?=BASE_URL?>assets/images/usuario.svg"> <?= $_SESSION['identity']['nombre'] ?>
                         </button>
                     </a>
                 <?php endif; ?>

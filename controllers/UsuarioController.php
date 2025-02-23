@@ -3,7 +3,7 @@
     namespace controllers;
 
     use models\Usuario;
-    use PDOException;
+    use Utils;
 
     class UsuarioController{
 
@@ -25,22 +25,25 @@
                 $apellidos = isset($_POST['apellidos']) ? trim($_POST['apellidos']) : false;
                 $email = isset($_POST['email']) ? trim($_POST['email']) : false;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : false;
-        
+                $rol = isset($_POST['rol']) ? $_POST['rol'] : 'user';
+
                 if ($nombre && $apellidos && $email && $password) {
         
                     // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
 
                     if (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
+
                         $_SESSION['register'] = "failed_nombre";
-                        header("Location:" . BASE_URL . "usuario/registrarse");
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
+
                     }
                     
                     // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
         
                     if (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
                         $_SESSION['register'] = "failed_apellidos";
-                        header("Location:" . BASE_URL . "usuario/registrarse");
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
                     }
         
@@ -48,7 +51,7 @@
 
                     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $_SESSION['register'] = "failed_email";
-                        header("Location:" . BASE_URL . "usuario/registrarse");
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
                     }
         
@@ -56,7 +59,7 @@
 
                     if (!preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
                         $_SESSION['register'] = "failed_password";
-                        header("Location:" . BASE_URL . "usuario/registrarse");
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
                     }
         
@@ -67,6 +70,7 @@
                     $usuario->setApellidos($apellidos);
                     $usuario->setEmail($email);
                     $usuario->setPassword($password);
+                    $usuario->setRol($rol);
         
                     $_SESSION['register'] = $usuario->save() ? 'complete' : 'failed';
         
@@ -76,8 +80,17 @@
 
                 }
         
-                header("Location:" . BASE_URL . "usuario/registrarse");
-                exit;
+                // Redirigir al formulario de registro o de creación de usuario según lo que se haya hecho
+
+                if($_SESSION['register'] == 'complete'){
+
+                    header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'admin' : 'registrarse'));
+
+                }else{
+                    
+                    header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
+
+                }
 
             }
             
@@ -167,13 +180,36 @@
 
         }
 
-        // Método para gestionar el usuario
+        // Método para gestionar el usuario.
+        // Si no hay ninguna id en el GET, se requiere la vista de gestión del usuario. (gestion.php)
+        // Si hay una id en el GET, se muestra la vista de edición del usuario. (editar.php)
 
         public function gestion(): void{
-            require_once 'views/usuario/gestion.php';
+            
+            if(isset($_GET['id'])){
+
+                $id = $_GET['id'];
+                
+                if(Usuario::getById($id)){
+
+                    require_once 'views/usuario/editar.php';
+
+                }else{
+
+                    require_once 'views/usuario/gestion.php';
+
+                }
+
+            }else{
+
+                require_once 'views/usuario/gestion.php';
+
+            }
+
         }
 
-        // Método para editar el usuario
+        // Método para editar el usuario.
+        // Al igual que el guardar, vamos a contemplar los casos del administrador y del propio usuario.
 
         public function editar(): void {
 
@@ -185,6 +221,7 @@
                 $apellidos = isset($_POST['apellidos']) ? trim($_POST['apellidos']) : null;
                 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : null;
+                $rol = isset($_POST['rol']) ? $_POST['rol'] : null;
 
                 // Si el nombre, apellido o email es distinto al mostrado por los inputs (actuales valores) O la contraseña tiene más de 0 caracteres, es decir, se ha introducido una nueva contraseña, entonces se procede a la validación y actualización de los datos:
 
@@ -231,6 +268,8 @@
                     $usuario->setEmail($email);
                     $usuario->setPassword($password);
 
+                    if($rol) $usuario->setRol($rol);
+
                     if($usuario->update()){
 
                         $_SESSION['identity']['nombre'] = $nombre;
@@ -258,52 +297,83 @@
 
         }
 
-        // Método para eliminar el usuario
+        // Método para eliminar un usuario.
+        // Si no hay id en el GET, se elimina el usuario con la sesión iniciada.
+        // Si hay id en el GET, se elimina el usuario con ese id.
+
+        // En el caso de que el propio admin elimine su cuenta, mediante la tabla, se le redirige a la página de inicio.
 
         public function eliminar(): void {
 
-            // Obtener usuario actual de la sesión
+            if(isset($_GET['id'])){
 
-            $usuario = new Usuario();
-            $usuario->setId($_SESSION['identity']['id']);
-    
-            // Intentar eliminar el usuario
+                $id = $_GET['id'];
 
-            if($usuario->delete()){
+                $usuario = new Usuario();
+                $usuario->setId($id);
 
-                // Cerrar sesión
+                if($usuario->delete()){
 
-                if(isset($_SESSION['identity'])) unset($_SESSION['identity']);
-                if(isset($_SESSION['admin'])) unset($_SESSION['admin']);
+                    $_SESSION['delete'] = "complete";
 
-                $_SESSION['delete'] = "complete";
+                    if($_SESSION['identity']['id'] == $id){
+
+                        Utils::deleteSession('identity');
+                        Utils::deleteSession('admin');
+
+                        header("Location:" . BASE_URL);
+
+                    }
+
+                }else{
+
+                    $_SESSION['delete'] = "failed";
+
+                }
+
+                header("Location:" . BASE_URL . "usuario/admin");
 
             }else{
 
-                $_SESSION['delete'] = "failed";
+                $usuario = new Usuario();
+                $usuario->setId($_SESSION['identity']['id']);
+
+                if($usuario->delete()){
+
+                    $_SESSION['delete'] = "complete";
+
+                    Utils::deleteSession('identity');
+                    Utils::deleteSession('admin');
+
+                }else{
+
+                    $_SESSION['delete'] = "failed";
+
+                }
+
+                header("Location:" . BASE_URL);
 
             }
-    
-            header("Location:" . BASE_URL);
+
             exit;
 
         }
 
         // Método para mostrar la vista de administración de usuarios
 
-        public function admin(): void{
+        public function admin(): void {
             
-            // Comprobar si el usuario es admin
+            Utils::isAdmin();
+            require_once 'views/usuario/admin.php';
 
-            if(isset($_SESSION['admin'])){
+        }
 
-                require_once 'views/usuario/admin.php';
+        // Método para crear un usuario
 
-            }else{
+        public function crear(): void {
 
-                header("Location:" . BASE_URL);
-
-            }
+            Utils::isAdmin();
+            require_once 'views/usuario/crear.php';
 
         }
         

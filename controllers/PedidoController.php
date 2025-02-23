@@ -2,17 +2,14 @@
 
     namespace controllers;
 
+    use Utils;
+
     class PedidoController{
 
+        public function admin(){
 
-
-        public function index(): void{
-            echo "Controlador Pedido, Acción index";
-        }
-
-        public function gestionar(){
-
-            
+            Utils::isAdmin();
+            require_once 'views/pedido/admin.php';
 
         }
         

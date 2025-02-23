@@ -10,7 +10,7 @@
     // Controlador y acción por defecto
 
     define('CONTROLLER_DEFAULT', 'Producto');
-    define('ACTION_DEFAULT', 'index');
+    define('ACTION_DEFAULT', 'recomendados');
 
     // Rutas
 

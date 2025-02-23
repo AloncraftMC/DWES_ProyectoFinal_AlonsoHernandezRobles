@@ -6,7 +6,7 @@
 
     use controllers\ErrorController;
 
-    // Autoload , Configuración y Clase Utils
+    // Autoload, Configuración y Clase Utils
 
     require_once 'autoload.php';
     require_once 'config.php';

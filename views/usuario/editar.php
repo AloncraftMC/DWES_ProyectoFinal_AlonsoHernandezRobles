@@ -1,4 +1,4 @@
-<h1 style="margin-bottom: 0px">Gestión de Usuario</h1>
+<h1 style="margin-bottom: 0px">Editar Usuario</h1>
 <h3><?=$_SESSION['identity']['nombre']?> <?=$_SESSION['identity']['apellidos']?></h3>
 
 <form method="post" action="<?=BASE_URL?>usuario/editar">

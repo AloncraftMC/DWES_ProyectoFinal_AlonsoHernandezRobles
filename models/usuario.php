@@ -16,7 +16,7 @@
         private BaseDatos $baseDatos;
         
         public function __construct(){
-            $this->baseDatos = new BaseDatos();    
+            $this->baseDatos = new BaseDatos();
         }
 
         /* GETTERS Y SETTERS */
@@ -83,11 +83,12 @@
 
             // Insertar el usuario en la base de datos
             
-            $this->baseDatos->ejecutar("INSERT INTO usuarios VALUES(null, :nombre, :apellidos, :email, :password, 'user', null)", [
+            $this->baseDatos->ejecutar("INSERT INTO usuarios VALUES(null, :nombre, :apellidos, :email, :password, :rol, null)", [
                 ':nombre' => $this->nombre,
                 ':apellidos' => $this->apellidos,
                 ':email' => $this->email,
-                ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4])
+                ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4]),
+                ':rol' => $this->rol
             ]);
 
             return $this->baseDatos->getNumeroRegistros() == 1;
@@ -169,7 +170,6 @@
             return $this->baseDatos->getNumeroRegistros() == 1;
 
         }
-        
 
         public function delete(): bool{
 
@@ -182,6 +182,57 @@
             return $this->baseDatos->getNumeroRegistros() == 1;
 
         }
+
+        public static function getById(int $id): ?Usuario {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM usuarios WHERE id = :id", [
+                ':id' => $id
+            ]);
+
+            if($baseDatos->getNumeroRegistros() == 1){
+
+                $registro = $baseDatos->getSiguienteRegistro();
+
+                $usuario = new Usuario();
+                $usuario->setId($registro['id']);
+                $usuario->setNombre($registro['nombre']);
+                $usuario->setApellidos($registro['apellidos']);
+                $usuario->setEmail($registro['email']);
+                $usuario->setRol($registro['rol']);
+
+                return $usuario;
+
+            }
+
+            return null;
+
+        }
+
+        public static function getAll(): array {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM usuarios");
+        
+            $registros = $baseDatos->getRegistros();
+
+            $usuarios = [];
+        
+            foreach ($registros as $registro) {
+
+                $usuario = new Usuario();
+                $usuario->setId($registro['id']);
+                $usuario->setNombre($registro['nombre']);
+                $usuario->setApellidos($registro['apellidos']);
+                $usuario->setEmail($registro['email']);
+                $usuario->setRol($registro['rol']);
+        
+                $usuarios[] = $usuario;
+                
+            }
+        
+            return $usuarios;
+        }        
         
     }
 

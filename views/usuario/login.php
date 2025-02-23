@@ -22,4 +22,4 @@
 
 <?php endif; ?>
 
-<?php Utils::eliminarSesion('login'); ?>
+<?php Utils::deleteSession('login'); ?>

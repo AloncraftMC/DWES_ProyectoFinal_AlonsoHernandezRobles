@@ -2,12 +2,14 @@
 
     namespace controllers;
 
+    use Utils;
+
     class CarritoController{
-
-
-
-        public function index(): void{
-            echo "Controlador Carrito, Acción index";
+        
+        public function gestion(){
+            
+            require_once 'views/carrito/gestion.php';
+            
         }
         
     }
