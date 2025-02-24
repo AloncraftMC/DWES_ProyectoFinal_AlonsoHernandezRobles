@@ -17,6 +17,8 @@
 
         public function guardar(): void {
 
+            Utils::isIdentity();
+
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 // Recoger datos con trim() para evitar espacios adicionales
@@ -103,6 +105,10 @@
 
                 }
 
+            }else{
+
+                header("Location:" . BASE_URL);
+
             }
             
         }
@@ -110,6 +116,14 @@
         // Método para mostrar la vista de iniciar sesión
 
         public function login(): void{
+
+            // Si ya estamos identificados, nos redirige a la página principal
+            
+            if(isset($_SESSION['identity'])){
+
+                header("Location:" . BASE_URL);
+
+            }
 
             // Cargar cookies
 
@@ -147,7 +161,7 @@
         public function entrar(): void{
 
             // Compruebo si se ha enviado el formulario
-
+            
             if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 // Compruebo si se han enviado los datos necesarios
@@ -216,18 +230,22 @@
                 }
 
             }else{
-
-                $_SESSION['login'] = "failed";
+                
+                header("Location:" . BASE_URL);
+                exit;
 
             }
-
+            
             header("Location:" . BASE_URL . "usuario/login");
+            exit;
 
         }
 
         // Método para cerrar sesión
 
         public function salir(): void{
+
+            Utils::isIdentity();
 
             Utils::deleteSession('identity');
             Utils::deleteSession('admin');
@@ -245,6 +263,8 @@
         // Si hay una id en el GET, se muestra la vista de edición del usuario (acción de Admins). (editar.php)
 
         public function gestion(): void{
+
+            Utils::isIdentity();
             
             if(isset($_GET['id'])){
 
@@ -274,6 +294,8 @@
         // Al igual que el guardar, vamos a contemplar los casos del administrador y del propio usuario.
 
         public function editar(): void {
+
+            Utils::isIdentity();
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
@@ -454,6 +476,8 @@
         // En el caso de que el propio admin elimine su cuenta, mediante la tabla, se le redirige a la página de inicio.
 
         public function eliminar(): void {
+
+            Utils::isIdentity();
 
             if(isset($_GET['id'])){
 
