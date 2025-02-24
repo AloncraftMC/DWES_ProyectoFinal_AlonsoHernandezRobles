@@ -202,6 +202,7 @@
                 $registro = $baseDatos->getSiguienteRegistro();
 
                 $usuario = new Usuario();
+                
                 $usuario->setId($registro['id']);
                 $usuario->setNombre($registro['nombre']);
                 $usuario->setApellidos($registro['apellidos']);
@@ -228,6 +229,7 @@
                 $registro = $baseDatos->getSiguienteRegistro();
 
                 $usuario = new Usuario();
+
                 $usuario->setId($registro['id']);
                 $usuario->setNombre($registro['nombre']);
                 $usuario->setApellidos($registro['apellidos']);
@@ -254,6 +256,7 @@
             foreach ($registros as $registro) {
 
                 $usuario = new Usuario();
+
                 $usuario->setId($registro['id']);
                 $usuario->setNombre($registro['nombre']);
                 $usuario->setApellidos($registro['apellidos']);
@@ -265,6 +268,7 @@
             }
         
             return $usuarios;
+            
         }
         
     }

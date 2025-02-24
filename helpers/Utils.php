@@ -1,5 +1,7 @@
 <?php
 
+    namespace helpers;
+
     class Utils{
 
         // Método para eliminar sesiones

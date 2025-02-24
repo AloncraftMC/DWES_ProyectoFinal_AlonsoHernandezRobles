@@ -32,6 +32,93 @@
             $this->nombre = $nombre;
         }
 
+        /* MÉTODOS DINÁMICOS */
+
+        public function save(): bool{
+
+            $this->baseDatos->ejecutar("INSERT INTO categorias VALUES(null, :nombre)", [
+                ':nombre' => $this->nombre
+            ]);
+
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+
+        public function update(): bool {
+
+            // Tenemos que modificar todos los datos en otras tablas que dependan de esta categoría
+
+            $this->baseDatos->ejecutar("UPDATE categorias SET nombre = :nombre WHERE id = :id", [
+                ':nombre' => $this->nombre,
+                ':id' => $this->id
+            ]);
+
+            
+            
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+
+        public function delete(): bool{
+
+            $this->baseDatos->ejecutar("DELETE FROM categorias WHERE id = :id", [
+                ':id' => $this->id
+            ]);
+
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+
+        /* MÉTODOS ESTÁTICOS */
+
+        public static function getById(int $id): ?Categoria {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM categorias WHERE id = :id", [
+                ':id' => $id
+            ]);
+
+            if($baseDatos->getNumeroRegistros() == 1){
+
+                $registro = $baseDatos->getSiguienteRegistro();
+
+                $categoria = new Categoria();
+
+                $categoria->setId($registro['id']);
+                $categoria->setNombre($registro['nombre']);
+
+                return $categoria;
+
+            }
+
+            return null;
+
+        }
+
+        public static function getAll(): array {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM categorias");
+        
+            $registros = $baseDatos->getRegistros();
+
+            $categorias = [];
+        
+            foreach ($registros as $registro) {
+
+                $categoria = new Categoria();
+
+                $categoria->setId($registro['id']);
+                $categoria->setNombre($registro['nombre']);
+        
+                $categorias[] = $categoria;
+                
+            }
+        
+            return $categorias;
+            
+        }
+
     }
 
 ?>

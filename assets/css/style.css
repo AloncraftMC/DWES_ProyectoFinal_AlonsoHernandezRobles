@@ -151,6 +151,11 @@ main{
             background-color: rgb(18, 80, 140);
         }
 
+        &.more-margin{
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
     }
 
 }
@@ -296,6 +301,10 @@ form {
 
 }
 
+small{
+    color: rgb(219, 0, 0);
+}
+
 /* MENSAJES DE ERROR / ÉXITO */
 
 strong{
@@ -409,13 +418,14 @@ table {
 
         img{
             filter: invert();
-            transform: scale(1.5);
+            transform: scale(2.5);
         }
 
     }
 
     .disabled{
-        background-color: rgb(139, 139, 139);
+        background-color: rgb(200, 200, 200);
+        opacity: 0.5;
         cursor: not-allowed;
     }
 

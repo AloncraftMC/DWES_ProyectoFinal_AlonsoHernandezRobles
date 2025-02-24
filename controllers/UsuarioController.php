@@ -3,7 +3,7 @@
     namespace controllers;
 
     use models\Usuario;
-    use Utils;
+    use helpers\Utils;
 
     class UsuarioController{
 
@@ -28,6 +28,14 @@
                 $email = isset($_POST['email']) ? trim($_POST['email']) : false;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : false;
                 $rol = isset($_POST['rol']) ? $_POST['rol'] : 'user';
+
+                $_SESSION['form_data'] = [
+                    'nombre' => $nombre,
+                    'apellidos' => $apellidos,
+                    'email' => $email,
+                    'password' => $password,
+                    'rol' => $rol
+                ];
 
                 if ($nombre && $apellidos && $email && $password) {
         
@@ -88,6 +96,8 @@
 
                     // Si no somos administradores, vamos a registrarse
                     // Pero si somos administradores, vamos a la administración de usuarios, primero comprobando si $_SESSION['pag'] está seteado
+
+                    Utils::deleteSession('form_data');
 
                     if(isset($_SESSION['admin'])){
 
@@ -168,22 +178,13 @@
 
                 $email = isset($_POST['email']) ? $_POST['email'] : false;
                 $password = isset($_POST['password']) ? $_POST['password'] : false;
-                
-                // Remember es un checkbox. Si se ha marcado, se guarda una cookie con el email durante 7 días
+                $remember = isset($_POST['remember']);
 
-                if(isset($_POST['remember'])){
-
-                    setcookie('recuerdame', $email, time() + 60 * 60 * 24 * 7);
-
-                }else{
-
-                    if(isset($_COOKIE['recuerdame'])){
-
-                        setcookie('recuerdame', $email, time() - 1);
-
-                    }
-
-                }
+                $_SESSION['form_data'] = [
+                    'email' => $email,
+                    'password' => $password,
+                    'remember' => $remember
+                ];
 
                 // Si se han enviado los datos necesarios
 
@@ -203,14 +204,31 @@
 
                     if($usuario){
 
+                        Utils::deleteSession('form_data');
+
                         $_SESSION['identity'] = [
                             'id' => $usuario->getId(),
                             'nombre' => $usuario->getNombre(),
                             'apellidos' => $usuario->getApellidos(),
                             'email' => $usuario->getEmail(),
-                            'rol' => $usuario->getRol(),
-                            'imagen' => $usuario->getImagen()
+                            'rol' => $usuario->getRol()
                         ];
+
+                        // Remember es un checkbox. Si se ha marcado, se guarda una cookie con el email durante 7 días
+
+                        if($remember){
+
+                            setcookie('recuerdame', $email, time() + 60 * 60 * 24 * 7);
+
+                        }else{
+
+                            if(isset($_COOKIE['recuerdame'])){
+
+                                setcookie('recuerdame', $email, time() - 1);
+
+                            }
+
+                        }
 
                         if ($usuario->getRol() == 'admin') $_SESSION['admin'] = true;
                     
@@ -306,6 +324,14 @@
                 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : null;
                 $rol = isset($_POST['rol']) ? $_POST['rol'] : null;
+
+                $_SESSION['form_data'] = [
+                    'nombre' => $nombre,
+                    'apellidos' => $apellidos,
+                    'email' => $email,
+                    'password' => $password,
+                    'rol' => $rol
+                ];
                 
                 // Contemplamos dos casos:
                 // 1. Se ha enviado la id por GET y modificamos los datos de ese usuario.
@@ -365,6 +391,8 @@
                         if($usuario->update()){
     
                             $_SESSION['gestion'] = "complete";
+
+                            Utils::deleteSession('form_data');
                             
                             if($_SESSION['identity']['id'] == $id){
 
@@ -442,11 +470,13 @@
     
                         if($usuario->update()){
     
+                            $_SESSION['gestion'] = "complete";
+
+                            Utils::deleteSession('form_data');
+    
                             $_SESSION['identity']['nombre'] = $nombre;
                             $_SESSION['identity']['apellidos'] = $apellidos;
                             $_SESSION['identity']['email'] = $email;
-    
-                            $_SESSION['gestion'] = "complete";
     
                         }else{
     
@@ -541,7 +571,7 @@
             
             Utils::isAdmin();
 
-            $usuariosPorPagina = 5;
+            $usuariosPorPagina = ITEMS_PER_PAGE;
 
             // Aqui seteamos el numero de pagina, y abajo redirigimos a 1 o la última página si la página es menor que 1 o mayor que el total de páginas
 

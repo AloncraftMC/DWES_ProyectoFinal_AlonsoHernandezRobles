@@ -1,3 +1,5 @@
+<?php use helpers\Utils; ?>
+
 <h1>Registrarse</h1>
 
 <form method="post" action="<?=BASE_URL?>usuario/guardar">
@@ -5,11 +7,12 @@
     <div class="form-group">
 
         <label for="nombre">Nombre</label>
-        <input type="text" name="nombre" required>
+        <input type="text" name="nombre" required value="<?= isset($_SESSION['form_data']['nombre']) ? $_SESSION['form_data']['nombre'] : '' ?>">
 
         <?php if(isset($_SESSION['register']) && $_SESSION['register'] == 'failed_nombre'): ?>
 
             <small class="error">El nombre, de al menos 2 caracteres, solo puede contener letras y espacios.</small>
+            <?php Utils::deleteSession('register'); ?>
 
         <?php endif; ?>
 
@@ -19,11 +22,12 @@
     <div class="form-group">
 
         <label for="apellidos">Apellidos</label>
-        <input type="text" name="apellidos" required>
+        <input type="text" name="apellidos" required value="<?= isset($_SESSION['form_data']['apellidos']) ? $_SESSION['form_data']['apellidos'] : '' ?>">
 
         <?php if(isset($_SESSION['register']) && $_SESSION['register'] == 'failed_apellidos'): ?>
 
             <small class="error">Los apellidos, de al menos 2 caracteres, solo pueden contener letras y espacios.</small>
+            <?php Utils::deleteSession('register'); ?>
 
         <?php endif; ?>
 
@@ -33,11 +37,12 @@
     <div class="form-group">
 
         <label for="email">Email</label>
-        <input type="email" name="email" required>
+        <input type="email" name="email" required value="<?= isset($_SESSION['form_data']['email']) ? $_SESSION['form_data']['email'] : '' ?>">
 
         <?php if(isset($_SESSION['register']) && $_SESSION['register'] == 'failed_email'): ?>
 
             <small class="error">Introduce un email válido.</small>
+            <?php Utils::deleteSession('register'); ?>
 
         <?php endif; ?>
 
@@ -46,11 +51,12 @@
     <div class="form-group">
 
         <label for="password">Contraseña</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" required value="<?= isset($_SESSION['form_data']['password']) ? $_SESSION['form_data']['password'] : '' ?>">
 
         <?php if(isset($_SESSION['register']) && $_SESSION['register'] == 'failed_password'): ?>
 
             <small class="error">La contraseña debe tener mínimo 8 caracteres, una letra y un número.</small>
+            <?php Utils::deleteSession('register'); ?>
 
         <?php endif; ?>
 
@@ -71,3 +77,4 @@
 <?php endif; ?>
 
 <?php Utils::deleteSession('register'); ?>
+<?php Utils::deleteSession('form_data'); ?>

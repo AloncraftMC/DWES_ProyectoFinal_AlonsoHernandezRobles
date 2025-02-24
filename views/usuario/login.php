@@ -1,20 +1,22 @@
+<?php use helpers\Utils; ?>
+
 <h1>Iniciar Sesión</h1>
 
 <form method="post" action="<?=BASE_URL?>usuario/entrar">
 
     <div class="form-group">
         <label for="email">Email</label>
-        <input type="email" name="email" required>
+        <input type="email" name="email" required value="<?= isset($_SESSION['form_data']['email']) ? $_SESSION['form_data']['email'] : '' ?>">
     </div>
 
     <div class="form-group">
         <label for="password">Contraseña</label>
-        <input type="password" name="password" required>
+        <input type="password" name="password" required value="<?= isset($_SESSION['form_data']['password']) ? $_SESSION['form_data']['password'] : '' ?>">
     </div>
 
     <!-- Casilla para recordar el usuario con una cookie que dura 7 días -->
     <div class="form-group checkbox-group">
-        <input type="checkbox" id="remember" name="remember">
+        <input type="checkbox" id="remember" name="remember" <?= $_SESSION['form_data']['remember'] ? 'checked' : '' ?>>
         <label for="remember">Recordar usuario durante 7 días</label>
     </div>
 
@@ -29,3 +31,4 @@
 <?php endif; ?>
 
 <?php Utils::deleteSession('login'); ?>
+<?php Utils::deleteSession('form_data'); ?>

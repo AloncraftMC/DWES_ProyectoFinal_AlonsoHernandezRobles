@@ -2,7 +2,7 @@
 
     namespace controllers;
 
-    use Utils;
+    use helpers\Utils;
 
     class CarritoController{
         

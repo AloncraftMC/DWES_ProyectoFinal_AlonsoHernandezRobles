@@ -16,4 +16,8 @@
 
     define('BASE_URL', 'http://localhost/DWES/Proyecto%20Final%20DWES/');
 
+    // Ítems por página
+
+    define('ITEMS_PER_PAGE', 5);
+
 ?>
