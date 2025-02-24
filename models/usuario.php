@@ -216,6 +216,32 @@
 
         }
 
+        public static function getByEmail(string $email): ?Usuario {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM usuarios WHERE email = :email", [
+                ':email' => $email
+            ]);
+
+            if($baseDatos->getNumeroRegistros() == 1){
+
+                $registro = $baseDatos->getSiguienteRegistro();
+
+                $usuario = new Usuario();
+                $usuario->setId($registro['id']);
+                $usuario->setNombre($registro['nombre']);
+                $usuario->setApellidos($registro['apellidos']);
+                $usuario->setEmail($registro['email']);
+                $usuario->setRol($registro['rol']);
+
+                return $usuario;
+
+            }
+
+            return null;
+
+        }
+
         public static function getAll(): array {
 
             $baseDatos = new BaseDatos();

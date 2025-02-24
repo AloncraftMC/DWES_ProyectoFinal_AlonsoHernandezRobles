@@ -226,6 +226,26 @@ form {
 
     }
 
+    .checkbox-group {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        gap: 10px; /* Espaciado entre checkbox y texto */
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: 30px;
+        height: 50px;
+        accent-color: rgb(24, 100, 175); /* Color azul al marcar */
+        cursor: pointer;
+    }
+    
+    .checkbox-group label {
+        font-size: 1em;
+        cursor: pointer;
+    }
+
     button, .btn-delete {
         margin-top: 20px;
         width: 100%;

@@ -110,7 +110,36 @@
         // Método para mostrar la vista de iniciar sesión
 
         public function login(): void{
+
+            // Cargar cookies
+
+            if (isset($_COOKIE['recuerdame'])) {
+                
+                $email = $_COOKIE['recuerdame'];
+                
+                $usuario = Usuario::getByEmail($email);
+                
+                if ($usuario) {
+
+                    $_SESSION['identity'] = [
+                        'id' => $usuario->getId(),
+                        'nombre' => $usuario->getNombre(),
+                        'apellidos' => $usuario->getApellidos(),
+                        'email' => $usuario->getEmail(),
+                        'rol' => $usuario->getRol()
+                    ];
+            
+                    if ($usuario->getRol() == 'admin') $_SESSION['admin'] = true;
+            
+                    header("Location:" . BASE_URL);
+                    exit;
+
+                }
+
+            }
+
             require_once 'views/usuario/login.php';
+
         }
 
         // Método para iniciar sesión
@@ -119,12 +148,28 @@
 
             // Compruebo si se ha enviado el formulario
 
-            if(isset($_POST)){
+            if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
                 // Compruebo si se han enviado los datos necesarios
 
                 $email = isset($_POST['email']) ? $_POST['email'] : false;
                 $password = isset($_POST['password']) ? $_POST['password'] : false;
+                
+                // Remember es un checkbox. Si se ha marcado, se guarda una cookie con el email durante 7 días
+
+                if(isset($_POST['remember'])){
+
+                    setcookie('recuerdame', $email, time() + 60 * 60 * 24 * 7);
+
+                }else{
+
+                    if(isset($_COOKIE['recuerdame'])){
+
+                        setcookie('recuerdame', $email, time() - 1);
+
+                    }
+
+                }
 
                 // Si se han enviado los datos necesarios
 
@@ -186,6 +231,10 @@
 
             Utils::deleteSession('identity');
             Utils::deleteSession('admin');
+
+            if (isset($_COOKIE['recuerdame'])) {
+                setcookie('recuerdame', '', time() - 1);
+            }
 
             header("Location:" . BASE_URL);
 

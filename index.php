@@ -1,5 +1,7 @@
 <?php
 
+    // Inicio la sesión
+
     session_start();
 
     // Importar controlador de errores

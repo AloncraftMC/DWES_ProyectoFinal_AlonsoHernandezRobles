@@ -12,6 +12,12 @@
         <input type="password" name="password" required>
     </div>
 
+    <!-- Casilla para recordar el usuario con una cookie que dura 7 días -->
+    <div class="form-group checkbox-group">
+        <input type="checkbox" id="remember" name="remember">
+        <label for="remember">Recordar usuario durante 7 días</label>
+    </div>
+
     <button type="submit">Iniciar Sesión</button>
 
 </form>
