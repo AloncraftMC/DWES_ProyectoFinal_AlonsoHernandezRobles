@@ -16,6 +16,7 @@
         <th>Apellidos</th>
         <th>Email</th>
         <th>Rol</th>
+        <th>Imagen</th>
         <th>Acciones</th>
     </tr>
 
@@ -31,13 +32,22 @@
             <!-- Si el rol es 'user', mostrar 'Usuario', si es 'admin', mostrar 'Administrador' -->
             <td><?=($usuario->getRol() === 'user') ? 'Usuario' : 'Administrador'?></td>
 
-            <td class="acciones">
+            <!-- Imagen del Usuario -->
+            <td>
+                <?php if($usuario->getImagen()): ?>
+                    <img src="<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>?t=<?=time()?>" alt="Imagen de perfil de <?=$usuario->getNombre()?>" style="max-width: 100px; max-height: 100px; border-radius: 50%;">
+                <?php else: ?>
+                    <span>No disponible</span>
+                <?php endif; ?>
+            </td>
+
+            <td class="acciones-especial">
                 
-                <a href="<?=BASE_URL?>usuario/gestion&id=<?=$usuario->getId()?>">
+                <a class="forzar-azul" href="<?=BASE_URL?>usuario/gestion&id=<?=$usuario->getId()?>">
                     Editar
                 </a>
 
-                <div class="separador"></div>
+                <div class="separador especial"></div>
 
                 <a href="<?=BASE_URL?>usuario/eliminar&id=<?=$usuario->getId()?>">
                     Eliminar

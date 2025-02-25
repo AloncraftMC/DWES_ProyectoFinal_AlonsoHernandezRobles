@@ -112,80 +112,63 @@
 
         <?php endif; ?>
 
-        <!-- Mostramos una vista previa de la imagen actual o nueva (subida) antes de enviar el formulario -->
-
-        <div style="margin-top: 30px; display: flex; justify-content: center; align-items: center; width: 100%;">
-            <img id="imagen-preview" src="#" alt="Vista previa de la imagen" style="display: none; min-height: 100px; max-height: 100px; border-radius: 5px;">
-        </div>
-
+        <!-- Mensaje de error antes de la vista previa -->
         <div id="error-imagen" style="display: none; margin-top: 10px;">
             <small class="error">La imagen debe ser jpg, png o svg.</small>
         </div>
 
+        <!-- Mostramos una vista previa de la imagen actual o nueva (subida) antes de enviar el formulario -->
+        <div style="margin-top: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+            <img id="imagen-preview" src="<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>" alt="Vista previa de la imagen" style="display: block; min-height: 100px; max-height: 100px; border-radius: 5px; margin-bottom: 15px;">
+            <button id="eliminar-imagen" type="button" class="delete-image">
+                Eliminar imagen
+            </button>
+        </div>
+
         <script>
-            
-            // Mostramos la imagen actual del producto en la vista previa
-
-            document.getElementById('imagen-preview').style.display = 'block';
-            document.getElementById('imagen-preview').src = '<?=BASE_URL?>assets/images/uploads/<?=$producto->getImagen()?>';
-
-            // Mostramos la imagen subida en la vista previa validando el formato
-
-            document.querySelector('input[name="imagen"]').addEventListener('change', function(){
-
+            document.querySelector('input[name="imagen"]').addEventListener('change', function () {
                 const file = this.files[0];
                 const preview = document.querySelector('#imagen-preview');
                 const errorImagen = document.getElementById('error-imagen');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
 
                 if (file) {
-
                     const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
-                    
-                    if (allowedTypes.includes(file.type)) {
 
+                    if (allowedTypes.includes(file.type)) {
                         const reader = new FileReader();
 
-                        reader.onload = function(){
-
+                        reader.onload = function () {
+                            errorImagen.style.display = 'none'; // Ocultar error antes de mostrar la imagen
                             preview.src = reader.result;
                             preview.style.display = 'block';
-                            errorImagen.style.display = 'none'; // Ocultar el error si el archivo es válido
-                        
+                            btnEliminar.style.display = 'block';
                         };
 
                         reader.readAsDataURL(file);
-
                     } else {
-
-                        preview.style.display = 'none';
-                        preview.src = "#";
-                        errorImagen.style.display = 'block'; // Mostrar el error si el archivo es inválido
-
+                        errorImagen.style.display = 'block'; // Mostrar error antes de ocultar la imagen
+                        preview.src = '<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>';
+                        preview.style.display = 'block';
+                        btnEliminar.style.display = 'none'; // Ahora sí, ocultamos el botón
+                        this.value = ''; // Limpiar el input
                     }
-
                 } else {
-
+                    preview.src = '<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>';
                     preview.style.display = 'block';
-                    preview.src = '<?=BASE_URL?>assets/images/uploads/<?=$producto->getImagen()?>';
-                    errorImagen.style.display = 'none'; // Ocultar el error si no se selecciona archivo
-
+                    errorImagen.style.display = 'none';
                 }
-
             });
 
-            // Detectamos si el usuario ha borrado la imagen de subida y volvemos a mostrar la imagen actual del producto
+            document.querySelector('#eliminar-imagen').addEventListener('click', function () {
+                const inputImagen = document.querySelector('input[name="imagen"]');
+                const preview = document.querySelector('#imagen-preview');
 
-            document.querySelector('input[name="imagen"]').addEventListener('input', function(){
-
-                if (!this.files.length) {
-
-                    document.getElementById('imagen-preview').style.display = 'block';
-                    document.getElementById('imagen-preview').src = '<?=BASE_URL?>assets/images/uploads/<?=$producto->getImagen()?>';
-                
-                }
-
+                preview.src = '<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>';
+                preview.style.display = 'block';
+                inputImagen.value = ''; // Elimina la imagen del input
+                this.style.display = 'none';
             });
-
         </script>
 
     </div>

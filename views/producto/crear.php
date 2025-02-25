@@ -105,8 +105,11 @@
 
         <!-- Mostramos una vista previa de la imagen antes de enviar el formulario -->
 
-        <div style="margin-top: 30px; display: flex; justify-content: center; align-items: center; width: 100%;">
+        <div style="margin-top: 0px; display: flex; justify-content: center; align-items: center; width: 100%;">
             <img id="imagen-preview" src="#" alt="Vista previa de la imagen" style="display: none; min-height: 100px; max-height: 100px; border-radius: 5px;">
+            <button id="eliminar-imagen" type="button" class="delete-image">
+                Eliminar imagen
+            </button>
         </div>
         
         <div id="error-imagen" style="display: none;">
@@ -119,6 +122,7 @@
 
                 const imagen = this.files[0];
                 const imagenPreview = document.querySelector('#imagen-preview');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
                 
                 if (imagen) {
 
@@ -134,6 +138,9 @@
 
                             imagenPreview.src = reader.result;
                             imagenPreview.style.display = 'block';
+                            imagenPreview.style.marginTop = '30px';
+                            btnEliminar.style.display = 'block';
+                            btnEliminar.style.marginTop = '20px';
                         
                         }
 
@@ -143,6 +150,9 @@
 
                         imagenPreview.src = '#';
                         imagenPreview.style.display = 'none';
+                        imagenPreview.style.marginTop = '0px';
+                        btnEliminar.style.display = 'none';
+                        btnEliminar.style.marginTop = '00px';
                         document.getElementById('error-imagen').style.display = 'block';
                         this.value = '';
 
@@ -152,9 +162,19 @@
 
                     imagenPreview.src = '#';
                     imagenPreview.style.display = 'none';
+                    btnEliminar.style.display = 'none';
 
                 }
 
+            });
+
+            document.querySelector('#eliminar-imagen').addEventListener('click', function() {
+                const inputImagen = document.querySelector('input[name="imagen"]');
+                const imagenPreview = document.querySelector('#imagen-preview');
+                this.style.display = 'none';
+                imagenPreview.src = '#';
+                imagenPreview.style.display = 'none';
+                inputImagen.value = ''; // Elimina la imagen del input
             });
 
         </script>

@@ -9,7 +9,7 @@
 
 <h3><?=$usuario->getNombre()?> <?=$usuario->getApellidos()?></h3>
 
-<form method="post" action="<?=BASE_URL?>usuario/editar&id=<?=$_GET['id']?>">
+<form method="post" action="<?=BASE_URL?>usuario/editar&id=<?=$_GET['id']?>" enctype="multipart/form-data">
     
     <div class="form-group">
 
@@ -77,6 +77,77 @@
             <option value="admin" <?= (isset($_SESSION['form_data']['rol']) && $_SESSION['form_data']['rol'] == 'admin') ? 'selected' : ($usuario->getRol() == 'admin' ? 'selected' : '') ?>>Administrador</option>
         
         </select>
+    </div>
+
+    <!-- Sección de Imagen -->
+    <div class="form-group">
+        <label for="imagen">Imagen</label>
+        <input type="file" name="imagen" id="imagen-input">
+        
+        <div id="error-imagen" style="display: none;">
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+        </div>
+
+        <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; width: 100%;">
+            <?php
+            
+                $imagenActual = $usuario->getImagen();
+                $imagenURL = $imagenActual ? BASE_URL . "assets/images/uploads/usuarios/" . $imagenActual : "#";
+            ?>
+            <img id="imagen-preview" src="<?= $imagenURL ?>" alt="Vista previa de la imagen" style="<?= $imagenActual ? 'display: block;' : 'display: none;' ?> min-height: 100px; max-height: 100px; border-radius: 5px;">
+            <button id="eliminar-imagen" type="button" class="delete-image" style="display: none; margin-left: 10px;">
+                Eliminar imagen
+            </button>
+        </div>
+
+        <script>
+            (function(){
+                const inputImagen = document.querySelector('#imagen-input');
+                const imagenPreview = document.querySelector('#imagen-preview');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
+                const errorImagen = document.getElementById('error-imagen');
+                // Guardamos la URL original para poder restaurarla
+                const originalSrc = imagenPreview.getAttribute('src');
+
+                inputImagen.addEventListener('change', function() {
+                    const imagen = this.files[0];
+                    if (imagen) {
+                        const extension = imagen.name.split('.').pop().toLowerCase();
+                        const extensionesValidas = ['jpg', 'jpeg', 'png', 'svg'];
+                        
+                        if (extensionesValidas.includes(extension)) {
+                            errorImagen.style.display = 'none';
+                            const reader = new FileReader();
+                            
+                            reader.onload = function(e) {
+                                // Mostramos la imagen seleccionada en el preview
+                                imagenPreview.src = e.target.result;
+                                imagenPreview.style.display = 'block';
+                                imagenPreview.style.marginTop = '20px';
+                                // Mostramos el botón para eliminar la nueva imagen
+                                btnEliminar.style.display = 'block';
+                                btnEliminar.style.marginTop = '30px';
+                            };
+                            
+                            reader.readAsDataURL(imagen);
+                        } else {
+                            // En caso de formato no válido, mostramos error y limpiamos el input
+                            errorImagen.style.display = 'block';
+                            inputImagen.value = '';
+                        }
+                    }
+                });
+
+                btnEliminar.addEventListener('click', function() {
+                    // Al pulsar "Eliminar imagen", se restaura la imagen original...
+                    imagenPreview.src = originalSrc;
+                    // ...se oculta el botón eliminar...
+                    btnEliminar.style.display = 'none';
+                    // ...y se limpia el input file.
+                    inputImagen.value = '';
+                });
+            })();
+        </script>
     </div>
 
     <button type="submit">Guardar Cambios</button>

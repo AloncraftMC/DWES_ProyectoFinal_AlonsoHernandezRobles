@@ -80,8 +80,6 @@
         /* MÉTODOS DINÁMICOS */
 
         public function save(): bool{
-
-            // Insertar el usuario en la base de datos
             
             $this->baseDatos->ejecutar("INSERT INTO usuarios VALUES(null, :nombre, :apellidos, :email, :password, :rol, null)", [
                 ':nombre' => $this->nombre,
@@ -131,16 +129,17 @@
 
         public function update(): bool {
 
-            if(strlen($this->password) == 0) $this->password = null;
+            if(!$this->password || strlen($this->password) == 0) $this->password = null;
             
             if(!isset($this->rol)) $this->rol = 'user';
+            if(!isset($this->imagen)) $this->imagen = Usuario::getById($this->id)->getImagen();
 
             if($this->password !== null) {
-
+                
                 // Si se ha introducido una nueva contraseña, se actualiza el campo 'password'
 
                 $query = "UPDATE usuarios 
-                          SET nombre = :nombre, apellidos = :apellidos, email = :email, password = :password, rol = :rol
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email, password = :password, rol = :rol, imagen = :imagen
                           WHERE id = :id";
 
                 $params = [
@@ -149,6 +148,7 @@
                     ':email' => $this->email,
                     ':password' => password_hash($this->password, PASSWORD_BCRYPT, ['cost' => 4]),
                     ':rol' => $this->rol,
+                    ':imagen' => $this->imagen,
                     ':id' => $this->id
                 ];
 
@@ -157,7 +157,7 @@
                 // Si no se ha introducido una nueva contraseña, se actualizan los demás campos sin tocar 'password'
 
                 $query = "UPDATE usuarios 
-                          SET nombre = :nombre, apellidos = :apellidos, email = :email, rol = :rol
+                          SET nombre = :nombre, apellidos = :apellidos, email = :email, rol = :rol, imagen = :imagen
                           WHERE id = :id";
 
                 $params = [
@@ -165,6 +165,7 @@
                     ':apellidos' => $this->apellidos,
                     ':email' => $this->email,
                     ':rol' => $this->rol,
+                    ':imagen' => $this->imagen,
                     ':id' => $this->id
                 ];
 
@@ -177,8 +178,6 @@
         }
 
         public function delete(): bool{
-
-            // Eliminar el usuario de la base de datos
 
             $this->baseDatos->ejecutar("DELETE FROM usuarios WHERE id = :id", [
                 ':id' => $this->id
@@ -208,6 +207,7 @@
                 $usuario->setApellidos($registro['apellidos']);
                 $usuario->setEmail($registro['email']);
                 $usuario->setRol($registro['rol']);
+                $usuario->setImagen($registro['imagen']);
 
                 return $usuario;
 
@@ -235,6 +235,7 @@
                 $usuario->setApellidos($registro['apellidos']);
                 $usuario->setEmail($registro['email']);
                 $usuario->setRol($registro['rol']);
+                $usuario->setImagen($registro['imagen']);
 
                 return $usuario;
 
@@ -262,6 +263,7 @@
                 $usuario->setApellidos($registro['apellidos']);
                 $usuario->setEmail($registro['email']);
                 $usuario->setRol($registro['rol']);
+                $usuario->setImagen($registro['imagen']);
         
                 $usuarios[] = $usuario;
                 

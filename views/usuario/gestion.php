@@ -3,7 +3,7 @@
 <h1 style="margin-bottom: 0px">Gestión de Usuario</h1>
 <h3><?=$_SESSION['identity']['nombre']?> <?=$_SESSION['identity']['apellidos']?></h3>
 
-<form method="post" action="<?=BASE_URL?>usuario/editar">
+<form method="post" action="<?=BASE_URL?>usuario/editar" enctype="multipart/form-data">
 
     <div class="form-group">
 

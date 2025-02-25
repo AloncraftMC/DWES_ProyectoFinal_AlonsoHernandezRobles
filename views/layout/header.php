@@ -37,9 +37,6 @@
                 document.body.removeChild(overlay);
             };
             overlay.appendChild(popup);
-            overlay.onclick = function(event) {
-                if (event.target === overlay) document.body.removeChild(overlay);
-            };
 
             document.body.appendChild(overlay);
         };
@@ -98,8 +95,9 @@
                             <img src="<?=BASE_URL?>assets/images/producto.svg">Productos
                         </button>
                     </a>
-                    <a href="<?=BASE_URL?>pedido/admin">
-                        <button class="boton">
+                <!--<a href="<?=BASE_URL?>pedido/admin" style="opacity: 0.5;">-->
+                    <a style="opacity: 0.5; pointer-events: none;">
+                        <button class="boton" style="opacity: 0.5;">
                             <img src="<?=BASE_URL?>assets/images/pedido.svg">Pedidos
                         </button>
                     </a>

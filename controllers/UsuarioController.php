@@ -28,13 +28,15 @@
                 $email = isset($_POST['email']) ? trim($_POST['email']) : false;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : false;
                 $rol = isset($_POST['rol']) ? $_POST['rol'] : 'user';
-
+                $imagen = isset($_FILES['imagen']) ? $_FILES['imagen'] : false;
+                
                 $_SESSION['form_data'] = [
                     'nombre' => $nombre,
                     'apellidos' => $apellidos,
                     'email' => $email,
                     'password' => $password,
-                    'rol' => $rol
+                    'rol' => $rol,
+                    'imagen' => $imagen
                 ];
 
                 if ($nombre && $apellidos && $email && $password) {
@@ -72,6 +74,15 @@
                         header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
                     }
+
+                    // Validar imagen (jpeg, png, svg)
+
+                    $permitidos = ['image/jpeg', 'image/png', 'image/svg+xml'];
+                    if ($imagen && (!in_array($imagen['type'], $permitidos) || $imagen['error'] != UPLOAD_ERR_OK)) {
+                        $_SESSION['register'] = 'failed_imagen';
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
+                        exit;
+                    }
         
                     // Crear objeto Usuario y guardar en BD
 
@@ -82,46 +93,76 @@
                     $usuario->setPassword($password);
                     $usuario->setRol($rol);
         
-                    $_SESSION['register'] = $usuario->save() ? 'complete' : 'failed';
+                    if ($usuario->save()) {
+
+                        Utils::deleteSession('form_data');
+        
+                        // Guardar la imagen si se ha subido
+
+                        if ($imagen) {
+
+                            $usuario = Usuario::getByEmail($email);
+                            $usuario->setPassword('');
+
+                            $id = $usuario->getId();
+                            $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+                            $nombreImagen = $id . '.' . $ext;
+                            $uploadDir = 'assets/images/uploads/usuarios/';
+        
+                            if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+        
+                            if (move_uploaded_file($imagen['tmp_name'], $uploadDir . $nombreImagen)) {
+
+                                $usuario->setImagen($nombreImagen);
+                                $usuario->update();
+
+                            } else {
+
+                                $_SESSION['register'] = 'failed_imagen';
+                                header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
+                                exit;
+
+                            }
+
+                        }
+        
+                        $_SESSION['register'] = 'complete';
+        
+                        if (isset($_SESSION['admin'])) {
+
+                            Utils::deleteSession('register');
+                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        
+                        } else {
+
+                            header("Location:" . BASE_URL . "usuario/registrarse");
+                        
+                        }
+        
+                    } else {
+
+                        $_SESSION['register'] = 'failed';
+                        header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
+                        exit;
+
+                    }
         
                 } else {
 
                     $_SESSION['register'] = "failed";
-
-                }
-        
-                // Redirigir al formulario de registro o de creación de usuario según lo que se haya hecho
-
-                if($_SESSION['register'] == 'complete'){
-
-                    // Si no somos administradores, vamos a registrarse
-                    // Pero si somos administradores, vamos a la administración de usuarios, primero comprobando si $_SESSION['pag'] está seteado
-
-                    Utils::deleteSession('form_data');
-
-                    if(isset($_SESSION['admin'])){
-
-                        Utils::deleteSession('register');
-                        header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
-                        
-                    }else{
-                        
-                        header("Location:" . BASE_URL . "usuario/registrarse");
-
-                    }
-
-                }else{
-                    
                     header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
+                    exit;
 
                 }
 
-            }else{
+        
+            } else {
 
                 header("Location:" . BASE_URL);
+                exit;
 
             }
-            
+
         }
 
         // Método para mostrar la vista de iniciar sesión
@@ -151,7 +192,8 @@
                         'nombre' => $usuario->getNombre(),
                         'apellidos' => $usuario->getApellidos(),
                         'email' => $usuario->getEmail(),
-                        'rol' => $usuario->getRol()
+                        'rol' => $usuario->getRol(),
+                        'imagen' => $usuario->getImagen()
                     ];
             
                     if ($usuario->getRol() == 'admin') $_SESSION['admin'] = true;
@@ -212,7 +254,8 @@
                             'nombre' => $usuario->getNombre(),
                             'apellidos' => $usuario->getApellidos(),
                             'email' => $usuario->getEmail(),
-                            'rol' => $usuario->getRol()
+                            'rol' => $usuario->getRol(),
+                            'imagen' => $usuario->getImagen()
                         ];
 
                         // Remember es un checkbox. Si se ha marcado, se guarda una cookie con el email durante 7 días
@@ -316,191 +359,135 @@
         public function editar(): void {
 
             Utils::isIdentity();
-
+        
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
                 // Recoger datos con trim() para evitar espacios adicionales
-
                 $nombre = isset($_POST['nombre']) ? trim($_POST['nombre']) : null;
                 $apellidos = isset($_POST['apellidos']) ? trim($_POST['apellidos']) : null;
                 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : null;
                 $rol = isset($_POST['rol']) ? $_POST['rol'] : null;
-
+                $imagen = isset($_FILES['imagen']) ? $_FILES['imagen'] : false;
+        
                 $_SESSION['form_data'] = [
                     'nombre' => $nombre,
                     'apellidos' => $apellidos,
                     'email' => $email,
                     'password' => $password,
-                    'rol' => $rol
+                    'rol' => $rol,
+                    'imagen' => $imagen
                 ];
-                
-                // Contemplamos dos casos:
-                // 1. Se ha enviado la id por GET y modificamos los datos de ese usuario.
-                // 2. No se ha enviado la id por GET y modificamos los datos del usuario con la sesión iniciada.
-
-                if(isset($_GET['id'])){
-
-                    Utils::isAdmin();
-
-                    $id = $_GET['id'];
-                    $dummyUsuario = Usuario::getById($id);
-                    
-                    if($nombre != $dummyUsuario->getNombre() || $apellidos != $dummyUsuario->getApellidos() || $email != $dummyUsuario->getEmail() || strlen($password) > 0 || $rol != $dummyUsuario->getRol()){
-
-                        // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
-    
-                        if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
-                            $_SESSION['gestion'] = "failed_nombre";
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
-                            exit;
-                        }
-                        
-                        // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
-            
-                        if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
-                            $_SESSION['gestion'] = "failed_apellidos";
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
-                            exit;
-                        }
-            
-                        // Validar email
-    
-                        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                            $_SESSION['gestion'] = "failed_email";
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
-                            exit;
-                        }
-            
-                        // Validar contraseña (mínimo 8 caracteres, al menos una letra y un número)
-    
-                        if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
-                            $_SESSION['gestion'] = "failed_password";
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
-                            exit;
-                        }
-    
-                        // Crear objeto Usuario y guardar en BD
-    
-                        $usuario = new Usuario();
-                        $usuario->setId($id);
-                        $usuario->setNombre($nombre);
-                        $usuario->setApellidos($apellidos);
-                        $usuario->setEmail($email);
-                        $usuario->setPassword($password);
-                        $usuario->setRol($rol);
-    
-                        if($usuario->update()){
-    
-                            $_SESSION['gestion'] = "complete";
-
-                            Utils::deleteSession('form_data');
-                            
-                            if($_SESSION['identity']['id'] == $id){
-
-                                $_SESSION['identity']['nombre'] = $nombre;
-                                $_SESSION['identity']['apellidos'] = $apellidos;
-                                $_SESSION['identity']['email'] = $email;
-                                $_SESSION['identity']['rol'] = $rol;
-
-                                Utils::isAdmin();
-
-                            }
-                            
-                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
-                            exit;
-    
-                        }else{
-    
-                            $_SESSION['gestion'] = "failed";
-
-                        }
-
-                    }else{
-
-                        $_SESSION['gestion'] = "nothing";
-
+        
+                // Determinar si estamos editando otro usuario o el usuario actual
+                $id = isset($_GET['id']) ? $_GET['id'] : $_SESSION['identity']['id'];
+                $dummyUsuario = Usuario::getById($id);
+        
+                if ($nombre != $dummyUsuario->getNombre() || 
+                    $apellidos != $dummyUsuario->getApellidos() || 
+                    $email != $dummyUsuario->getEmail() || 
+                    strlen($password) > 0 || 
+                    $rol != $dummyUsuario->getRol() ||
+                    ($imagen && $imagen['name'])
+                ) {
+        
+                    // Validaciones
+                    if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
+                        $_SESSION['gestion'] = "failed_nombre";
+                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        exit;
                     }
-
-                    header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
-                    exit;
-
-                }else{
-
-                    if($nombre != $_SESSION['identity']['nombre'] || $apellidos != $_SESSION['identity']['apellidos'] || $email != $_SESSION['identity']['email'] || strlen($password) > 0){
-
-                        // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
-    
-                        if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
-                            $_SESSION['gestion'] = "failed_nombre";
-                            header("Location:" . BASE_URL . "usuario/gestion");
-                            exit;
-                        }
+        
+                    if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
+                        $_SESSION['gestion'] = "failed_apellidos";
+                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        exit;
+                    }
+        
+                    if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                        $_SESSION['gestion'] = "failed_email";
+                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        exit;
+                    }
+        
+                    if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
+                        $_SESSION['gestion'] = "failed_password";
+                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        exit;
+                    }
+        
+                    // Validar imagen (jpeg, png, svg) y que no haya errores de subida
+                    if ($imagen && $imagen['name']) {
+                        $permitidos = ['image/jpeg', 'image/png', 'image/svg+xml'];
                         
-                        // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
-            
-                        if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
-                            $_SESSION['gestion'] = "failed_apellidos";
-                            header("Location:" . BASE_URL . "usuario/gestion");
+                        if (!in_array($imagen['type'], $permitidos) || $imagen['error'] != UPLOAD_ERR_OK) {
+                            $_SESSION['gestion'] = 'failed_imagen';
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
                             exit;
                         }
-            
-                        // Validar email
-    
-                        if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                            $_SESSION['gestion'] = "failed_email";
-                            header("Location:" . BASE_URL . "usuario/gestion");
+                    }
+        
+                    // Crear objeto Usuario y guardar en BD
+                    $usuario = new Usuario();
+                    $usuario->setId($id);
+                    $usuario->setNombre($nombre);
+                    $usuario->setApellidos($apellidos);
+                    $usuario->setEmail($email);
+                    $usuario->setPassword($password);
+                    $usuario->setRol($rol);
+        
+                    // Manejo de la imagen de perfil
+                    if ($imagen && $imagen['name']) {
+        
+                        // Eliminar imagen anterior
+                        $imagenAnterior = $dummyUsuario->getImagen();
+                        $uploadDir = 'assets/images/uploads/usuarios/';
+        
+                        if (is_file($uploadDir . $imagenAnterior)) unlink($uploadDir . $imagenAnterior);
+                        
+                        // Subir nueva imagen
+                        $ext = pathinfo($imagen['name'], PATHINFO_EXTENSION);
+                        $nombreImagen = $id . '.' . $ext;
+        
+                        if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
+        
+                        if (move_uploaded_file($imagen['tmp_name'], $uploadDir . $nombreImagen)) {
+                            $usuario->setImagen($nombreImagen);
+                        } else {
+                            $_SESSION['gestion'] = 'failed';
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
                             exit;
                         }
-            
-                        // Validar contraseña (mínimo 8 caracteres, al menos una letra y un número)
-    
-                        if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
-                            $_SESSION['gestion'] = "failed_password";
-                            header("Location:" . BASE_URL . "usuario/gestion");
-                            exit;
-                        }
-    
-                        // Crear objeto Usuario y guardar en BD
-    
-                        $usuario = new Usuario();
-                        $usuario->setId($_SESSION['identity']['id']);
-                        $usuario->setNombre($nombre);
-                        $usuario->setApellidos($apellidos);
-                        $usuario->setEmail($email);
-                        $usuario->setPassword($password);
-                        $usuario->setRol($_SESSION['identity']['rol']);
-    
-                        if($usuario->update()){
-    
-                            $_SESSION['gestion'] = "complete";
-
-                            Utils::deleteSession('form_data');
-    
+                    }
+        
+                    if ($usuario->update()) {
+                        $_SESSION['gestion'] = "complete";
+                        Utils::deleteSession('form_data');
+        
+                        if ($_SESSION['identity']['id'] == $id) {
                             $_SESSION['identity']['nombre'] = $nombre;
                             $_SESSION['identity']['apellidos'] = $apellidos;
                             $_SESSION['identity']['email'] = $email;
-    
-                        }else{
-    
-                            $_SESSION['gestion'] = "failed";
-    
+                            $_SESSION['identity']['rol'] = $rol;
+                            $_SESSION['identity']['imagen'] = $usuario->getImagen();
                         }
-    
-                    }else{
-    
-                        $_SESSION['gestion'] = "nothing";
-    
+        
+                        header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        exit;
+                    } else {
+                        $_SESSION['gestion'] = "failed";
                     }
-                    
-                    header("Location:" . BASE_URL . "usuario/gestion");
-                    exit;
-
+                } else {
+                    $_SESSION['gestion'] = "nothing";
                 }
-
+        
+                header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                exit;
+            } else {
+                header("Location:" . BASE_URL);
+                exit;
             }
-
-        }
+        }        
 
         // Método para eliminar un usuario.
         // Si no hay id en el GET, se elimina el usuario con la sesión iniciada.
@@ -511,68 +498,84 @@
         public function eliminar(): void {
 
             Utils::isIdentity();
-
+        
             if(isset($_GET['id'])){
-
+        
                 Utils::isAdmin();
-
+        
                 $id = $_GET['id'];
-
+        
                 $usuario = Usuario::getById($id);
-
+        
                 if(!$usuario){
-
+        
                     header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
                     exit;
-
+        
                 }
-
+        
                 if($usuario->delete()){
-
+        
                     $_SESSION['delete'] = "complete";
-
+        
+                    // Borrar la imagen asociada al usuario (si existe)
+                    $imagen = $usuario->getImagen();  // Asumiendo que el usuario tiene un método para obtener su imagen
+                    $uploadDir = 'assets/images/uploads/usuarios/';
+        
+                    if ($imagen && is_file($uploadDir . $imagen)) {
+                        unlink($uploadDir . $imagen);
+                    }
+        
                     if($_SESSION['identity']['id'] == $id){
-
+        
                         Utils::deleteSession('identity');
                         Utils::deleteSession('admin');
-
+        
                         header("Location:" . BASE_URL);
-
+        
                     }
-
+        
                 }else{
-
+        
                     $_SESSION['delete'] = "failed";
-
+        
                 }
-
+        
                 header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
-
+        
             }else{
-
+        
                 $usuario = new Usuario();
                 $usuario->setId($_SESSION['identity']['id']);
-
+        
                 if($usuario->delete()){
-
+        
                     $_SESSION['delete'] = "complete";
-
+        
+                    // Borrar la imagen asociada al usuario (si existe)
+                    $imagen = $usuario->getImagen();  // Asumiendo que el usuario tiene un método para obtener su imagen
+                    $uploadDir = 'assets/images/uploads/usuarios/';
+        
+                    if ($imagen && is_file($uploadDir . $imagen)) {
+                        unlink($uploadDir . $imagen);
+                    }
+        
                     Utils::deleteSession('identity');
                     Utils::deleteSession('admin');
-
+        
                 }else{
-
+        
                     $_SESSION['delete'] = "failed";
-
+        
                 }
-
+        
                 header("Location:" . BASE_URL);
-
+        
             }
-
+        
             exit;
-
-        }
+        
+        }        
 
         // Método para mostrar la vista de administración de usuarios
 

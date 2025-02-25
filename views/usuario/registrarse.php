@@ -2,7 +2,7 @@
 
 <h1>Registrarse</h1>
 
-<form method="post" action="<?=BASE_URL?>usuario/guardar">
+<form method="post" action="<?=BASE_URL?>usuario/guardar" enctype="multipart/form-data">
 
     <div class="form-group">
 

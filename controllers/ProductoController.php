@@ -156,7 +156,7 @@
 
                         $nombreImagen = $id . '.' . $ext;
     
-                        $uploadDir = 'assets/images/uploads/';
+                        $uploadDir = 'assets/images/uploads/productos/';
 
                         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
     
@@ -311,7 +311,7 @@
                         // Eliminar imagen anterior
 
                         $imagen = $dummyProducto->getImagen();
-                        $uploadDir = 'assets/images/uploads/';
+                        $uploadDir = 'assets/images/uploads/productos/';
 
                         if (is_file($uploadDir . $imagen)) unlink($uploadDir . $imagen);
 
@@ -421,7 +421,7 @@
                     // Borramos la imagen del producto
 
                     $imagen = $producto->getImagen();
-                    $uploadDir = 'assets/images/uploads/';
+                    $uploadDir = 'assets/images/uploads/productos/';
 
                     if (is_file($uploadDir . $imagen)) unlink($uploadDir . $imagen);
 
@@ -433,6 +433,30 @@
 
                 header("Location:" . BASE_URL . "producto/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
                 exit;
+
+            }else{
+
+                header("Location:" . BASE_URL);
+                exit;
+
+            }
+
+        }
+
+        public function ver(): void {
+
+            if(isset($_GET['id'])){
+
+                $producto = Producto::getById($_GET['id']);
+
+                if(!$producto){
+
+                    header("Location:" . BASE_URL);
+                    exit;
+
+                }
+
+                require_once 'views/producto/ver.php';
 
             }else{
 

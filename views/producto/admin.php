@@ -53,7 +53,7 @@
                     <?=(strlen($producto->getDescripcion()) == 0) ? 'Sin descripción' : $producto->getDescripcion()?>
                 </td>
 
-                <td><?=$producto->getPrecio()?> €</td>
+                <td style="min-width: 60px;"><?=$producto->getPrecio()?> €</td>
                 <td><?=$producto->getStock()?></td>
 
                 <td><?php if($producto->getOferta() == 0) echo 'No'; else echo $producto->getOferta() . '%' ?></td>
@@ -69,10 +69,10 @@
                 </td>
                 
                 <td>
-                    <img src="<?=BASE_URL?>assets/images/uploads/<?=$producto->getImagen()?>?t=<?=time()?>" alt="<?=$producto->getNombre()?>">
+                    <img src="<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>?t=<?=time()?>" alt="<?=$producto->getNombre()?>">
                 </td>
 
-                <td class="acciones-producto">
+                <td class="acciones-especial">
 
                     <a href="<?=BASE_URL?>producto/ver&id=<?=$producto->getId()?>">
                         Ver
