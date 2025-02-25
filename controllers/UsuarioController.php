@@ -101,6 +101,7 @@
 
                     if(isset($_SESSION['admin'])){
 
+                        Utils::deleteSession('register');
                         header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
                         
                     }else{
