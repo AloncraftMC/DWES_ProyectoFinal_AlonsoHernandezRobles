@@ -3,16 +3,37 @@
     // Inicio la sesión
 
     session_start();
-
-    // Importar controlador de errores
+    
+    // Importar controlador de errores y modelo de usuario
 
     use controllers\ErrorController;
+    use models\Usuario;
 
     // Autoload, Configuración y Clase Utils
 
     require_once 'autoload.php';
     require_once 'config.php';
     require_once 'helpers/Utils.php';
+    
+    // Verificar si el usuario está en la sesión y actualizar sus datos desde la base de datos
+
+    if (isset($_SESSION['identity']) && isset($_SESSION['identity']['id'])) {
+
+        $usuario = Usuario::getById($_SESSION['identity']['id']);
+
+        if ($usuario) {
+
+            $_SESSION['identity'] = [
+                'id' => $usuario->getId(),
+                'nombre' => $usuario->getNombre(),
+                'apellidos' => $usuario->getApellidos(),
+                'email' => $usuario->getEmail(),
+                'rol' => $usuario->getRol()
+            ];
+
+        }
+        
+    }
 
     // Requiero el header
 

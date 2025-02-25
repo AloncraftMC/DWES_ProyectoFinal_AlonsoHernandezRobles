@@ -262,11 +262,12 @@
         // Método para cerrar sesión
 
         public function salir(): void{
-
+            
             Utils::isIdentity();
 
             Utils::deleteSession('identity');
             Utils::deleteSession('admin');
+            Utils::deleteSession('admin_popup');
 
             if (isset($_COOKIE['recuerdame'])) {
                 setcookie('recuerdame', '', time() - 1);
@@ -467,6 +468,7 @@
                         $usuario->setApellidos($apellidos);
                         $usuario->setEmail($email);
                         $usuario->setPassword($password);
+                        $usuario->setRol($_SESSION['identity']['rol']);
     
                         if($usuario->update()){
     
@@ -515,8 +517,14 @@
 
                 $id = $_GET['id'];
 
-                $usuario = new Usuario();
-                $usuario->setId($id);
+                $usuario = Usuario::getById($id);
+
+                if(!$usuario){
+
+                    header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                    exit;
+
+                }
 
                 if($usuario->delete()){
 

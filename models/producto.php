@@ -94,6 +94,163 @@
         public function setImagen(string $imagen): void{
             $this->imagen = $imagen;
         }
+
+        /* MÉTODOS DINÁMICOS */
+
+        public function save(): bool {
+
+            $this->baseDatos->ejecutar("INSERT INTO productos VALUES(null, :categoria_id, :nombre, :descripcion, :precio, :stock, :oferta, :fecha, null)", [
+                ':categoria_id' => $this->categoriaId,
+                ':nombre' => $this->nombre,
+                ':descripcion' => $this->descripcion,
+                ':precio' => $this->precio,
+                ':stock' => $this->stock,
+                ':oferta' => $this->oferta,
+                ':fecha' => $this->fecha
+            ]);
+        
+            if ($this->baseDatos->getNumeroRegistros() == 1) $this->setId($this->baseDatos->getUltimoId());
+        
+            return $this->baseDatos->getNumeroRegistros() == 1;
+            
+        }
+        
+
+        public function update(): bool {
+
+            if (!isset($this->imagen)) {
+
+                $this->baseDatos->ejecutar("SELECT imagen FROM productos WHERE id = :id", [
+                    ':id' => $this->id
+                ]);
+        
+                $registro = $this->baseDatos->getSiguienteRegistro();
+                $this->imagen = $registro['imagen'];
+
+            }
+
+            $this->baseDatos->ejecutar("UPDATE productos SET categoria_id = :categoria_id, nombre = :nombre, descripcion = :descripcion, precio = :precio, stock = :stock, oferta = :oferta, fecha = :fecha, imagen = :imagen WHERE id = :id", [
+                ':categoria_id' => $this->categoriaId,
+                ':nombre' => $this->nombre,
+                ':descripcion' => $this->descripcion,
+                ':precio' => $this->precio,
+                ':stock' => $this->stock,
+                ':oferta' => $this->oferta,
+                ':fecha' => $this->fecha,
+                ':imagen' => $this->imagen,
+                ':id' => $this->id
+            ]);
+            
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+
+        public function delete(): bool {
+
+            $this->baseDatos->ejecutar("DELETE FROM productos WHERE id = :id", [
+                ':id' => $this->id
+            ]);
+        
+            return $this->baseDatos->getNumeroRegistros() == 1;
+
+        }
+
+        /* MÉTODOS ESTÁTICOS */
+
+        public static function getById(int $id): ?Producto {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM productos WHERE id = :id", [
+                ':id' => $id
+            ]);
+        
+            if ($baseDatos->getNumeroRegistros() == 1) {
+        
+                $registro = $baseDatos->getSiguienteRegistro();
+        
+                $producto = new Producto();
+        
+                $producto->setId($registro['id']);
+                $producto->setCategoriaId($registro['categoria_id']);
+                $producto->setNombre($registro['nombre']);
+                $producto->setDescripcion($registro['descripcion']);
+                $producto->setPrecio($registro['precio']);
+                $producto->setStock($registro['stock']);
+                $producto->setOferta($registro['oferta']);
+                $producto->setFecha($registro['fecha']);
+                $producto->setImagen($registro['imagen']);
+        
+                return $producto;
+        
+            }
+        
+            return null;
+
+        }
+
+        public static function getByCategoria(int $categoriaId): array {
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM productos WHERE categoria_id = :categoria_id", [
+                ':categoria_id' => $categoriaId
+            ]);
+        
+            $registros = $baseDatos->getRegistros();
+        
+            $productos = [];
+        
+            foreach ($registros as $registro) {
+        
+                $producto = new Producto();
+        
+                $producto->setId($registro['id']);
+                $producto->setCategoriaId($registro['categoria_id']);
+                $producto->setNombre($registro['nombre']);
+                $producto->setDescripcion($registro['descripcion']);
+                $producto->setPrecio($registro['precio']);
+                $producto->setStock($registro['stock']);
+                $producto->setOferta($registro['oferta']);
+                $producto->setFecha($registro['fecha']);
+                $producto->setImagen($registro['imagen']);
+        
+                array_push($productos, $producto);
+                
+            }
+        
+            return $productos;
+
+        }
+
+        public static function getAll(): array{
+
+            $baseDatos = new BaseDatos();
+            $baseDatos->ejecutar("SELECT * FROM productos");
+        
+            $registros = $baseDatos->getRegistros();
+
+            $productos = [];
+        
+            foreach ($registros as $registro) {
+
+                $producto = new Producto();
+
+                $producto->setId($registro['id']);
+                $producto->setCategoriaId($registro['categoria_id']);
+                $producto->setNombre($registro['nombre']);
+                $producto->setDescripcion($registro['descripcion']);
+                $producto->setPrecio($registro['precio']);
+                $producto->setStock($registro['stock']);
+                $producto->setOferta($registro['oferta']);
+                $producto->setFecha($registro['fecha']);
+                $producto->setImagen($registro['imagen']);
+        
+                array_push($productos, $producto);
+                
+            }
+        
+            return $productos;
+
+        }
         
     }
 

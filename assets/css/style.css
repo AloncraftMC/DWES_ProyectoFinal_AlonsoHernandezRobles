@@ -37,8 +37,8 @@ header{
     transition: 0.2s;
     
     img{
-        width: 50px;
-        height: 50px;
+        max-width: 50px;
+        max-height: 50px;
         margin: 10px;
     }
 
@@ -168,6 +168,8 @@ footer{
     color: white;
     text-align: center;
     padding: 10px;
+    border-top: 5px rgb(202, 230, 255);
+    border-top-style: ridge;
 }
 
 /* FORMULARIOS */
@@ -229,6 +231,23 @@ form {
 
         }
 
+        textarea {
+
+            width: 95%;
+            padding: 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s;
+            height: 100px;
+
+            &:focus {
+                border-color: rgb(24, 100, 175);
+                outline: none;
+            }
+
+        }
+
     }
 
     .checkbox-group {
@@ -279,6 +298,7 @@ form {
         width: 96%;
         margin-top: 0px;
         background-color: rgb(200, 0, 0);
+        box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
     }
     
     .btn-delete:hover {
@@ -328,18 +348,26 @@ strong{
 
 /* TABLAS */
 
+.separador{
+    padding-left: 0.75px;
+    padding-right: 0.75px;
+    margin: 0 10px;
+    background-color: rgb(198, 198, 198);
+}
+
 table {
 
     border-collapse: collapse;
     width: 100%;
     margin-top: 20px;
+    box-shadow: 0px 2px 5px rgba(0,0,0,0.5);
 
     th, td {
 
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
-    
+
         &.acciones{
 
             display: flex;
@@ -372,6 +400,64 @@ table {
             }
 
         }
+
+        &.acciones-producto{
+
+            height: fit-content;
+
+            a{
+                
+                text-decoration: none;
+                color: rgb(0, 4, 255);
+
+                &:visited{
+                    color: rgb(0, 4, 255);
+                }
+
+                &:first-child{
+
+                    color: rgb(47, 158, 0);
+
+                    &:visited{
+                        color: rgb(47, 158, 0);
+                    }
+
+                }
+
+                &:last-child{
+
+                    color: rgb(218, 0, 0);
+
+                    &:visited{
+                        color: rgb(218, 0, 0);
+                    }
+
+                }
+
+            }
+
+            .separador{
+
+                padding: 1px;
+                padding-left: 0px;
+                padding-right: 0px;
+                margin-top: 5px;
+                margin-bottom: 5px;
+                transform: scale(0.75);
+
+            }
+
+            a:hover{
+                text-decoration: underline;
+            }
+
+        }
+
+        img{
+            min-height: 100px;
+            max-height: 100px;
+            margin: 0 10px;
+        }
     
     }
 
@@ -388,13 +474,6 @@ table {
         background-color: white;
     }
 
-}
-
-.separador{
-    padding-left: 0.75px;
-    padding-right: 0.75px;
-    margin: 0 10px;
-    background-color: rgb(198, 198, 198);
 }
 
 /* PAGINACIÓN */
@@ -427,6 +506,17 @@ table {
         background-color: rgb(200, 200, 200);
         opacity: 0.5;
         cursor: not-allowed;
+    }
+
+}
+
+.disabled{
+    background-color: rgb(200, 200, 200);
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    &:hover{
+        background-color: rgb(87, 87, 87);
     }
 
 }

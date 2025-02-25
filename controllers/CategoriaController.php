@@ -3,6 +3,7 @@
     namespace controllers;
 
     use models\Categoria;
+    use models\Producto;
     use helpers\Utils;
 
     class CategoriaController{
@@ -189,22 +190,41 @@
         }
 
         public function eliminar(): void {
-
+            
             Utils::isAdmin();
 
             if(isset($_GET['id'])){
 
                 $id = $_GET['id'];
 
-                $categoria = new Categoria();
-                $categoria->setId($id);
+                $categoria = Categoria::getById($id);
+                
+                if(!$categoria){
+
+                    header("Location:" . BASE_URL . "categoria/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                    exit;
+
+                }
+
+                $productos = Producto::getByCategoria($id);
+        
+                foreach ($productos as $producto) {
+
+                    $imagen = $producto->getImagen();
+                    $uploadDir = 'assets/images/uploads/';
+
+                    if ($imagen && is_file($uploadDir . $imagen)) unlink($uploadDir . $imagen);
+
+                    $producto->delete();
+
+                }
 
                 if($categoria->delete()){
-
+                    
                     $_SESSION['delete'] = "complete";
 
                 }else{
-
+                    
                     $_SESSION['delete'] = "failed";
 
                 }

@@ -32,7 +32,7 @@
         // Método para comprobar si el usuario está identificado
 
         public static function isIdentity(): void{
-
+            
             if(!isset($_SESSION['identity'])){
 
                 header('Location:'.BASE_URL);

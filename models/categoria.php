@@ -46,14 +46,10 @@
 
         public function update(): bool {
 
-            // Tenemos que modificar todos los datos en otras tablas que dependan de esta categoría
-
             $this->baseDatos->ejecutar("UPDATE categorias SET nombre = :nombre WHERE id = :id", [
                 ':nombre' => $this->nombre,
                 ':id' => $this->id
             ]);
-
-            
             
             return $this->baseDatos->getNumeroRegistros() == 1;
 
@@ -111,7 +107,7 @@
                 $categoria->setId($registro['id']);
                 $categoria->setNombre($registro['nombre']);
         
-                $categorias[] = $categoria;
+                array_push($categorias, $categoria);
                 
             }
         
