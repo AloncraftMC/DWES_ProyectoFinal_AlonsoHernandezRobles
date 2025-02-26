@@ -97,11 +97,11 @@
                 <?php if ($recomendados[$i]->getOferta() > 0): ?>
 
                     <h3 style="margin: 4px; color: red; text-decoration: line-through;"><?=$recomendados[$i]->getPrecio()?> €</h3>
-                    <h3 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> €</h3>
+                    <h1 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> € <span style="font-size: 70%; opacity: 0.3">(-<?=$recomendados[$i]->getOferta()?>%)</span></h1>
 
                 <?php else: ?>
 
-                    <h3 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h3>
+                    <h1 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h1>
 
                 <?php endif; ?>
                 
@@ -132,11 +132,11 @@
                 <?php if ($recomendados[$i]->getOferta() > 0): ?>
 
                     <h3 style="margin: 4px; color: red; text-decoration: line-through;"><?=$recomendados[$i]->getPrecio()?> €</h3>
-                    <h3 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> €</h3>
+                    <h1 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> € <span style="font-size: 70%; opacity: 0.3">(-<?=$recomendados[$i]->getOferta()?>%)</span></h1>
 
                 <?php else: ?>
 
-                    <h3 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h3>
+                    <h1 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h1>
 
                 <?php endif; ?>
                 

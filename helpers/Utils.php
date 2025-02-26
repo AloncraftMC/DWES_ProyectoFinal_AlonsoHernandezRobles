@@ -41,6 +41,24 @@
 
         }
 
+        // Método para mostrar estadísticas del carrito
+
+        public static function statsCarrito(): array{
+
+            $stats = array(
+                'count' => 0
+            );
+
+            if(isset($_SESSION['carrito'])){
+
+                $stats['count'] = count($_SESSION['carrito']);
+
+            }
+
+            return $stats;
+
+        }
+
     }
 
 ?>

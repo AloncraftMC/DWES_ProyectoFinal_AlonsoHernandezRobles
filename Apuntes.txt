@@ -1,2 +1,1 @@
-1. Ver Productos
-2. Imágenes en Registrarse y Gestión
+1. Imágenes de usuario en Registrarse y Gestión

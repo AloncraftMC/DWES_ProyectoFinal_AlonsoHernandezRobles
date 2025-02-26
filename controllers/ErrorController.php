@@ -6,6 +6,7 @@
 
         public function index(): void{
             echo "<h1>La página que buscas no existe.</h1>";
+            echo "<a href='".BASE_URL."'><button class=\"boton\">Volver a la tienda</button></a>";
         }
         
     }

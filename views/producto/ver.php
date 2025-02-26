@@ -1,49 +1,85 @@
 <?php
-
-use helpers\Utils;
-use models\Producto;
-use models\Categoria;
-    $usuario = Producto::getById($_GET['id']);
+    use helpers\Utils;
+    use models\Producto;
+    use models\Categoria;
+    $producto = Producto::getById($_GET['id']);
 ?>
 
-<h1><?=$producto->getNombre()?></h1>
+<div class="container">
+    
+    <img src="<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>" alt="<?=$producto->getNombre()?>">
 
-<div class="row">
-    <div class="col-md-6">
-        <img src="<?=BASE_URL?>assets/images/uploads/productos/<?=$producto->getImagen()?>" alt="<?=$producto->getNombre()?>" class="img-responsive">
+    <div class="product-info">
+        
+        <h1><?=$producto->getNombre()?></h1>
+
+        <div style="padding: 1px; background-color: lightgray;"></div>
+
+        <div class="product-info-more">
+            
+            <ul>
+
+                <li><h2>Categoría: <span class="value"><?=Categoria::getById($producto->getCategoriaId())->getNombre()?></span></h2></li>
+
+                <?php if ($producto->getOferta() > 0): ?>
+                    <li>
+                        <h2>Precio: 
+                            <span class="value">
+                                <span style="color: red; text-decoration: line-through; font-size: 80%;"><?=$producto->getPrecio()?> €</span>
+                                <span style="color: rgb(0, 0, 0); font-weight: bold;"><?=round($producto->getPrecio() * (1 - $producto->getOferta() / 100), 2)?> €</span>
+                                <span style="font-size: 80%; opacity: 0.5">(-<?=$producto->getOferta()?>%)</span>
+                            </span>
+                        </h2>
+                    </li>
+                <?php else: ?>
+                    <li>
+                        <h2>Precio: <span class="value"><?=$producto->getPrecio()?> €</span></h2>
+                    </li>
+                <?php endif; ?>
+
+                <li>
+                    <h2>Descripción: <span class="value desc"><?=(strlen($producto->getDescripcion()) > 0) ? $producto->getDescripcion() : 'Sin descripción'?></span></h2>
+                </li>
+
+            </ul>
+        
+        </div>
+
     </div>
-    <div class="col-md-6">
-        <p><strong>Categoría:</strong> <?=Categoria::getById($producto->getCategoriaId())->getNombre()?></p>
-        <p><strong>Descripción:</strong> <?=$producto->getDescripcion()?></p>
-        <p><strong>Precio:</strong> $<?=$producto->getPrecio()?></p>
-    </div>
+
 </div>
 
-<?php if(isset($_SESSION['carrito']) && $_SESSION['carrito'] == 'failed'): ?>
+<!-- Este div aparece si stock es mayor que 0, si no, aparece un mensaje en rojo "Producto agotado" -->
 
-    <div class="alert alert-danger">No se pudo añadir el producto al carrito.</div>
-    <?php Utils::deleteSession('carrito'); ?>
+<?php if ($producto->getStock() > 0): ?>
+
+    <div class="add-to-cart">
+        <form action="<?=BASE_URL?>carrito/add" method="POST">
+            <input type="hidden" name="producto_id" value="<?=$producto->getId()?>">
+            <label for="cantidad"><h2 style="margin-top: 40px; font-weight: normal;">Cantidad: </h2></label>
+            <input type="number" name="cantidad" min="1" value="1" class="quantity-input">
+            <button type="submit" class="boton">Añadir al carrito</button>
+        </form>
+    </div>
+
+<?php else: ?>
+
+    <strong class="yellow">Producto agotado</strong>
 
 <?php endif; ?>
 
-<form method="post" action="<?=BASE_URL?>carrito/add&id=<?=$_GET['id']?>">
+<?php if(isset($_SESSION['carritoResultado']) && $_SESSION['carritoResultado'] == 'failed_stock'): ?>
 
-    <div class="form-group"></div>
+    <strong class="red">No tenemos el stock solicitado para este producto.</strong>
 
-        <label for="unidades">Unidades</label>
-        <input type="number" name="unidades" required>
+<?php elseif(isset($_SESSION['carritoResultado']) && $_SESSION['carritoResultado'] == 'complete'): ?>
 
-        <?php if(isset($_SESSION['carrito']) && $_SESSION['carrito'] == 'failed_unidades'): ?>
+    <strong class="green">¡Producto añadido al carrito!</strong>
 
-            <small class="error">Las unidades deben ser un número entero.</small>
-            <?php Utils::deleteSession('carrito'); ?>
+<?php elseif(isset($_SESSION['carritoResultado']) && $_SESSION['carritoResultado'] == 'failed'): ?>
 
-        <?php endif; ?>
+    <strong class="red">Error al añadir el producto al carrito.</strong>
 
-    </div>
+<?php endif; ?>
 
-    <button type="submit" class="btn btn-primary">Añadir al carrito</button>
-</form>
-<?php Utils::deleteSession('form_data'); ?>
-<?php Utils::deleteSession('gestion'); ?>
-<?php Utils::deleteSession('carrito'); ?>
+<?php Utils::deleteSession('carritoResultado'); ?>

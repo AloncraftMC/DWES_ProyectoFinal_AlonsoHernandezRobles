@@ -174,7 +174,7 @@ footer{
 
 /* FORMULARIOS */
 
-form {
+form, .container {
 
     border-radius: 20px;
     background-color: rgba(255, 255, 255, 0.9);
@@ -337,6 +337,48 @@ form {
     }
 
 
+}
+
+.container{
+
+    width: 80%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+
+    img{
+        min-height: 300px;
+        max-height: 300px;
+        padding: 40px;
+    }
+
+    .product-info{
+            
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .product-info-more{
+
+            .value{
+                font-weight: normal;
+            }
+
+            .desc{
+                line-height: 1.5;
+            }
+
+        }
+
+    }
+
+}
+
+.price-offer{
+    
+        font-size: 1.5em;
+        color: rgb(0, 172, 0);
 }
 
 small{
@@ -551,4 +593,89 @@ table {
         background-color: rgb(87, 87, 87);
     }
 
+}
+
+/* AÑADIR AL CARRITO */
+
+.add-to-cart {
+
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+
+    form{
+        width: 100%;
+        padding: 0px;
+        background-color: transparent;
+        box-shadow: none;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+}
+
+.quantity-input {
+    margin-top: 20px;
+    width: 100px;
+    height: 50px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 2em;
+}
+
+.enlace-producto {
+    text-decoration: none;
+    color: blue;
+}
+
+.enlace-producto:hover {
+    text-decoration: underline;
+}
+
+/* Estilos generales para los botones + y - */
+.boton-carrito {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    background-color: #007bff; /* Color de fondo azul */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.boton-carrito:hover {
+    background-color: #0056b3; /* Color de fondo al pasar el ratón */
+    transform: scale(1.1); /* Aumentar tamaño al hacer hover */
+}
+
+.boton-carrito:active {
+    background-color: #004085; /* Color de fondo al hacer clic */
+}
+
+/* Estilo específico para el botón + */
+.boton-up {
+    background-color: #28a745; /* Verde para el botón + */
+}
+
+.boton-up:hover {
+    background-color: #218838; /* Verde más oscuro al hacer hover */
+}
+
+/* Estilo específico para el botón - */
+.boton-down {
+    background-color: #dc3545; /* Rojo para el botón - */
+}
+
+.boton-down:hover {
+    background-color: #c82333; /* Rojo más oscuro al hacer hover */
 }

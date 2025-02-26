@@ -95,8 +95,7 @@
                             <img src="<?=BASE_URL?>assets/images/producto.svg">Productos
                         </button>
                     </a>
-                <!--<a href="<?=BASE_URL?>pedido/admin" style="opacity: 0.5;">-->
-                    <a style="opacity: 0.5; pointer-events: none;">
+                    <a href="<?=BASE_URL?>pedido/admin" style="opacity: 0.5; pointer-events: none;">
                         <button class="boton" style="opacity: 0.5;">
                             <img src="<?=BASE_URL?>assets/images/pedido.svg">Pedidos
                         </button>

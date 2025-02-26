@@ -275,6 +275,16 @@
                         }
 
                         if ($usuario->getRol() == 'admin') $_SESSION['admin'] = true;
+
+                        if(isset($_SESSION['redirect_after_login'])){
+                            
+                            $productoIdRedirect = $_SESSION['redirect_after_login'];
+                            Utils::deleteSession('redirect_after_login');
+                            
+                            header("Location:" . BASE_URL . "producto/ver&id=" . $productoIdRedirect);
+                            exit;
+                        
+                        }
                     
                         header("Location:" . BASE_URL);
                         exit;
@@ -312,6 +322,7 @@
             Utils::deleteSession('identity');
             Utils::deleteSession('admin');
             Utils::deleteSession('admin_popup');
+            Utils::deleteSession('carrito');
 
             if (isset($_COOKIE['recuerdame'])) {
                 setcookie('recuerdame', '', time() - 1);
