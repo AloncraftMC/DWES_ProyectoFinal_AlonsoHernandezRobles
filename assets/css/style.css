@@ -679,3 +679,11 @@ table {
 .boton-down:hover {
     background-color: #c82333; /* Rojo más oscuro al hacer hover */
 }
+
+.btn-del{
+    background-color: rgb(200, 0, 0);
+}
+
+.btn-del:hover{
+    background-color: rgb(150, 0, 0);
+}

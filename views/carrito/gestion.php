@@ -22,6 +22,12 @@
 
 <?php else: ?>
 
+    <a href="<?=BASE_URL?>carrito/clear">
+        <button class="boton more-margin btn-del">
+            Vaciar carrito
+        </button>
+    </a>
+
     <table class="tabla-carrito">
         <thead>
             <tr>
@@ -81,7 +87,7 @@
 
         <!-- Botón para proceder a la compra -->
         <a href="<?= BASE_URL ?>pedido/crear">
-            <button class="boton">Enviar pedido</button>
+            <button class="boton">Hacer pedido</button>
         </a>
     </div>
 

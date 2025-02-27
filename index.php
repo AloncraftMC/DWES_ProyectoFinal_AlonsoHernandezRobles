@@ -4,9 +4,10 @@
 
     session_start();
     
-    // Importar controlador de errores y modelo de usuario
+    // Importar controlador de error, modelo de usuario y utilidades
 
     use controllers\ErrorController;
+    use helpers\Utils;
     use models\Usuario;
 
     // Autoload, Configuración y Clase Utils
@@ -14,6 +15,10 @@
     require_once 'autoload.php';
     require_once 'config.php';
     require_once 'helpers/Utils.php';
+
+    // Cookie del carrito
+
+    Utils::loadCookieCarrito();
     
     // Verificar si el usuario está en la sesión y actualizar sus datos desde la base de datos
 

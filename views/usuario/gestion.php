@@ -1,4 +1,11 @@
-<?php use helpers\Utils; ?>
+<?php
+    
+    use helpers\Utils;
+    use models\Usuario;
+
+    $usuario = Usuario::getById($_SESSION['identity']['id']);
+    
+?>
 
 <h1 style="margin-bottom: 0px">Gestión de Usuario</h1>
 <h3><?=$_SESSION['identity']['nombre']?> <?=$_SESSION['identity']['apellidos']?></h3>
@@ -61,6 +68,91 @@
 
         <?php endif; ?>
 
+    </div>
+
+    <div class="form-group">
+
+        <label for="imagen">Imagen</label>
+        <input type="file" name="imagen" style="cursor: pointer;">
+
+        <?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed_imagen'): ?>
+
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+            <?php Utils::deleteSession('gestion'); ?>
+
+        <?php endif; ?>
+        
+        <div id="error-imagen" style="display: none; margin-top: 10px;">
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+        </div>
+
+        <div style="margin-top: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+            <img style="display: block; min-height: 100px; max-height: 100px; border-radius: 5px; margin-bottom: 15px;" id="imagen-preview" src="<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>" alt="Vista previa de la imagen">
+            <button id="eliminar-imagen" type="button" class="delete-image">
+                Eliminar imagen
+            </button>
+        </div>
+
+        <script>
+
+            document.querySelector('input[name="imagen"]').addEventListener('change', function () {
+
+                const file = this.files[0];
+                const preview = document.querySelector('#imagen-preview');
+                const errorImagen = document.getElementById('error-imagen');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
+
+                if (file) {
+
+                    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+
+                    if (allowedTypes.includes(file.type)) {
+
+                        const reader = new FileReader();
+
+                        reader.onload = function () {
+                            errorImagen.style.display = 'none'; // Ocultar error antes de mostrar la imagen
+                            preview.src = reader.result;
+                            preview.style.display = 'block';
+                            btnEliminar.style.display = 'block';
+                        };
+
+                        reader.readAsDataURL(file);
+
+                    } else {
+
+                        errorImagen.style.display = 'block'; // Mostrar error antes de ocultar la imagen
+                        preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                        preview.style.display = 'block';
+                        btnEliminar.style.display = 'none'; // Ahora sí, ocultamos el botón
+                        this.value = ''; // Limpiar el input
+
+                    }
+
+                } else {
+
+                    preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                    preview.style.display = 'block';
+                    errorImagen.style.display = 'none';
+
+                }
+
+            });
+
+            document.querySelector('#eliminar-imagen').addEventListener('click', function () {
+
+                const inputImagen = document.querySelector('input[name="imagen"]');
+                const preview = document.querySelector('#imagen-preview');
+
+                preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                preview.style.display = 'block';
+                inputImagen.value = ''; // Elimina la imagen del input
+                this.style.display = 'none';
+                
+            });
+
+        </script>
+        
     </div>
 
     <button type="submit">Guardar Cambios</button>

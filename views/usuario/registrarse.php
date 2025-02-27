@@ -62,6 +62,95 @@
 
     </div>
 
+    <div class="form-group">
+        
+        <label for="imagen">Imagen</label>
+        <input type="file" name="imagen" required style="cursor: pointer;">
+
+        <?php if(isset($_SESSION['register']) && $_SESSION['register'] == 'failed_imagen'): ?>
+
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+            <?php Utils::deleteSession('register'); ?>
+
+        <?php endif; ?>
+
+        <!-- Vista previa de la imagen -->
+        <div style="margin-top: 0px; display: flex; justify-content: center; align-items: center; width: 100%;">
+            <img id="imagen-preview" src="#" alt="Vista previa de la imagen" style="display: none; min-height: 100px; max-height: 100px; border-radius: 5px;">
+            <button id="eliminar-imagen" type="button" class="delete-image">
+                Eliminar imagen
+            </button>
+        </div>
+
+        <div id="error-imagen" style="display: none;">
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+        </div>
+
+        <script>
+
+            document.querySelector('input[name="imagen"]').addEventListener('change', function() {
+
+                const imagen = this.files[0];
+                const imagenPreview = document.querySelector('#imagen-preview');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
+                
+                if (imagen) {
+
+                    const extension = imagen.name.split('.').pop().toLowerCase();
+                    const extensionesValidas = ['jpg', 'jpeg', 'png', 'svg'];
+                    
+                    if (extensionesValidas.includes(extension)) {
+
+                        const reader = new FileReader();
+                        document.getElementById('error-imagen').style.display = 'none';
+
+                        reader.onload = function() {
+
+                            imagenPreview.src = reader.result;
+                            imagenPreview.style.display = 'block';
+                            imagenPreview.style.marginTop = '30px';
+                            btnEliminar.style.display = 'block';
+                            btnEliminar.style.marginTop = '20px';
+                        
+                        }
+
+                        reader.readAsDataURL(imagen);
+
+                    } else {
+
+                        imagenPreview.src = '#';
+                        imagenPreview.style.display = 'none';
+                        imagenPreview.style.marginTop = '0px';
+                        btnEliminar.style.display = 'none';
+                        btnEliminar.style.marginTop = '00px';
+                        document.getElementById('error-imagen').style.display = 'block';
+                        this.value = '';
+
+                    }
+
+                } else {
+
+                    imagenPreview.src = '#';
+                    imagenPreview.style.display = 'none';
+                    btnEliminar.style.display = 'none';
+
+                }
+
+            });
+
+            document.querySelector('#eliminar-imagen').addEventListener('click', function() {
+                const inputImagen = document.querySelector('input[name="imagen"]');
+                const imagenPreview = document.querySelector('#imagen-preview');
+                this.style.display = 'none';
+                imagenPreview.src = '#';
+                imagenPreview.style.display = 'none';
+                inputImagen.value = ''; // Elimina la imagen del input
+            });
+
+        </script>
+
+    </div>
+
     <button type="submit">Registrarse</button>
 
 </form>

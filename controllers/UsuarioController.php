@@ -44,11 +44,9 @@
                     // Validar nombre (solo letras y espacios, mínimo 2 caracteres)
 
                     if (!preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
-
                         $_SESSION['register'] = "failed_nombre";
                         header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
-
                     }
                     
                     // Validar apellidos (solo letras y espacios, mínimo 2 caracteres)
@@ -127,7 +125,7 @@
                         }
         
                         $_SESSION['register'] = 'complete';
-        
+                        
                         if (isset($_SESSION['admin'])) {
 
                             Utils::deleteSession('register');
@@ -378,7 +376,7 @@
                 $apellidos = isset($_POST['apellidos']) ? trim($_POST['apellidos']) : null;
                 $email = isset($_POST['email']) ? trim($_POST['email']) : null;
                 $password = isset($_POST['password']) ? trim($_POST['password']) : null;
-                $rol = isset($_POST['rol']) ? $_POST['rol'] : null;
+                $rol = isset($_POST['rol']) ? $_POST['rol'] : $_SESSION['identity']['rol'];
                 $imagen = isset($_FILES['imagen']) ? $_FILES['imagen'] : false;
         
                 $_SESSION['form_data'] = [
@@ -429,6 +427,7 @@
         
                     // Validar imagen (jpeg, png, svg) y que no haya errores de subida
                     if ($imagen && $imagen['name']) {
+                        
                         $permitidos = ['image/jpeg', 'image/png', 'image/svg+xml'];
                         
                         if (!in_array($imagen['type'], $permitidos) || $imagen['error'] != UPLOAD_ERR_OK) {
@@ -436,6 +435,7 @@
                             header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
                             exit;
                         }
+
                     }
         
                     // Crear objeto Usuario y guardar en BD
@@ -463,15 +463,22 @@
                         if (!is_dir($uploadDir)) mkdir($uploadDir, 0777, true);
         
                         if (move_uploaded_file($imagen['tmp_name'], $uploadDir . $nombreImagen)) {
+
                             $usuario->setImagen($nombreImagen);
+                            $imagenCambiada = true;
+
                         } else {
+
                             $_SESSION['gestion'] = 'failed';
                             header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
                             exit;
+
                         }
+
                     }
         
                     if ($usuario->update()) {
+
                         $_SESSION['gestion'] = "complete";
                         Utils::deleteSession('form_data');
         
@@ -483,22 +490,62 @@
                             $_SESSION['identity']['imagen'] = $usuario->getImagen();
                         }
         
-                        header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
-                        exit;
+                        if (isset($_GET['id'])) {
+
+                            Utils::deleteSession('gestion');
+                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                            exit;
+
+                        }else {
+                        
+                            header("Location:" . BASE_URL . "usuario/gestion");
+                            exit;
+
+                        }
+                        
                     } else {
+
                         $_SESSION['gestion'] = "failed";
+
+                        // Establecemos a 'nothing' en el extraño caso de que sólo se haya cambiado la imagen y además coincida en formato con la anterior
+                        // Ejemplo: si la imagen es '1.jpg' y se sube una nueva '1.jpg', no se ha modificado nada
+
+                        if($usuario->getImagen() == $dummyUsuario->getImagen() && !$imagenCambiada) $_SESSION['gestion'] = "nothing";
+
+                        if($imagenCambiada) $_SESSION['gestion'] = "complete";
+
+                        if (isset($_GET['id'])) {
+
+                            Utils::deleteSession('gestion');
+                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                            exit;
+    
+                        }else {
+                            
+                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            exit;
+    
+                        }
+
                     }
+                    
                 } else {
+
                     $_SESSION['gestion'] = "nothing";
+
                 }
         
-                header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                 exit;
+
             } else {
+
                 header("Location:" . BASE_URL);
                 exit;
+
             }
-        }        
+
+        }
 
         // Método para eliminar un usuario.
         // Si no hay id en el GET, se elimina el usuario con la sesión iniciada.

@@ -77,18 +77,6 @@
             return $this->conexion->lastInsertId();
         }
 
-        public function iniciarCambios(): void{
-            $this->conexion->beginTransaction();
-        }
-
-        public function guardarCambios(): void{
-            $this->conexion->commit();
-        }
-
-        public function descartarCambios(): void{
-            $this->conexion->rollBack();
-        }
-
     }
 
 ?>

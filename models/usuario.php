@@ -132,6 +132,7 @@
             if(!$this->password || strlen($this->password) == 0) $this->password = null;
             
             if(!isset($this->rol)) $this->rol = 'user';
+            
             if(!isset($this->imagen)) $this->imagen = Usuario::getById($this->id)->getImagen();
 
             if($this->password !== null) {

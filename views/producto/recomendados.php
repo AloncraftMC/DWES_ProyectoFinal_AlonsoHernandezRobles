@@ -1,153 +1,265 @@
-<h1>Productos Recomendados</h1>
+<!-- Si se pasa una categoría por GET se pone "Productos Filtrados" -->
 
 <?php
+use models\Categoria;
+use models\Producto;
 
-    use models\Categoria;
-    use models\Producto;
+// Recuperamos todos los productos
+$todos = Producto::getAll();
 
-    // Vamos a mostrar 6 productos aleatorios
+// Bandera para saber si estamos en modo "por categoría"
+$modoCategoria = false;
 
-    $todos = Producto::getAll();
+// Definimos el array final de productos a mostrar
+$recomendados = [];
 
-    // Pero antes necesitamos saber si filtrar por categoría o no, mediante el parámetro GET
+// Si se pasa una categoría por GET se filtra y se usa paginación
 
-    if (isset($_GET['categoria'])) {
+if (isset($_GET['categoria'])) {
 
-        // Si se ha pasado un parámetro GET, filtramos por categoría
+    echo "<h1>Productos Filtrados</h1>";
 
-        $categoria = Categoria::getById($_GET['categoria']);
+    $categoria = Categoria::getById($_GET['categoria']);
+    $modoCategoria = true;
 
-        // Generamos un array con los productos de la categoría seleccionada asegurando que no se repitan
+    // Filtrar productos de la categoría indicada
 
-        $recomendados = [];
+    $productosFiltrados = [];
 
-        // Miramos primero si hay productos de la categoría seleccionada
-
-        foreach ($todos as $producto) {
-
-            if ($producto->getCategoriaId() == $categoria->getId()) {
-                $recomendados[] = $producto;
-            }
-
+    foreach ($todos as $producto) {
+        if ($producto->getCategoriaId() == $categoria->getId()) {
+            $productosFiltrados[] = $producto;
         }
+    }
+    
+    if (empty($productosFiltrados)) {
 
-        // Si no hay suficientes productos de la categoría seleccionada, establecemos null los últimos elementos
-        
-        while (count($recomendados) < 6) {
-
-            $producto = $todos[array_rand($todos)];
-            if (!in_array($producto, $recomendados)) array_push($recomendados, $producto);
-        
-        }
+        $noHayProductos = true;
 
     } else {
 
-        // Si no se ha pasado un parámetro GET, mostramos productos aleatorios sin filtrar
+        $noHayProductos = false;
 
-        $recomendados = [];
+        // Configuración de paginación (6 productos por página)
 
-        while (count($recomendados) < 6) {
+        $productosPorPagina = PRODUCTS_PER_PAGE;
+        
+        $pag = isset($_GET['pag']) ? (int)$_GET['pag'] : 1;
+        $totalProductos = count($productosFiltrados);
+        $totalPag = ceil($totalProductos / $productosPorPagina);
 
-            $producto = $todos[array_rand($todos)];
-            if (!in_array($producto, $recomendados)) array_push($recomendados, $producto);
-        }
+        if ($pag < 1) $pag = 1;
+        if ($pag > $totalPag) $pag = $totalPag;
+
+        $offset = ($pag - 1) * $productosPorPagina;
+        $recomendados = array_slice($productosFiltrados, $offset, $productosPorPagina);
+        
+        // Mostrar header de categoría
+
+        $mostrarHeader = true;
 
     }
 
+} else {
+
+    echo "<h1>Productos Recomendados</h1>";
+
+    // Modo aleatorio sin categoría
+
+    if (empty($todos)) {
+
+        $bdVacia = true;
+
+    } else {
+
+        $bdVacia = false;
+
+        $numProductos = min(6, count($todos));
+        $shuffled = $todos;
+
+        shuffle($shuffled);
+
+        $recomendados = array_slice($shuffled, 0, $numProductos);
+
+    }
+    
+}
+
+if(isset($mostrarHeader) && $mostrarHeader){
+
+    echo "<h2 style='margin-top: 0px; color: rgb(0,79,173);;'>Por categoría: " . $categoria->getNombre() . "</h2>";
+
+}
+
 ?>
 
-<!-- Si hay categoría seleccionada mostrar un h2 -->
+<!-- Mostrar barra de categorías solo si hay alguna -->
 
-<?php if (isset($categoria)): ?>
+<?php
+    $categorias = Categoria::getAll();
+    if (!empty($categorias)):
+?>
 
-    <h2 style="margin-top: 0px; color: rgb(0, 79, 173);;">Por categoría: <?=$categoria->getNombre()?></h2>
+<div style="margin-top: 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
 
-<?php endif; ?>
+    <?php foreach ($categorias as $cat): ?>
 
-<!-- Mostrar una barra con las categorías tal que Cat 1 | Cat 2 | Cat 3 | ... -->
-
-<div style="margin-top: 20px; margin-bottom: 20px; display: flex; justify-content: center; align-items: center;">
-
-    <?php foreach (Categoria::getAll() as $categoria): ?>
-
-        <a href="<?=BASE_URL?>producto/recomendados&categoria=<?=$categoria->getId()?>" class="boton" style="margin: 0px 20px;">
-            <button style="width: 200px;"><?=$categoria->getNombre()?></button>
-        </a>
+        <div style="margin: 10px;">
+            <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $cat->getId() ?>" class="boton">
+                <button style="width: 200px;"><?= $cat->getNombre() ?></button>
+            </a>
+        </div>
 
     <?php endforeach; ?>
 
 </div>
 
-<table>
+<?php if(isset($noHayProductos) && $noHayProductos): ?>
 
-    <!-- Mostrar primero 3 productos -->
+    <h2 style="color: gray">Aún no hay productos en esta categoría...</h2>
 
-    <tr style="background-color: white;">
+    <h1 style="font-size: 500%">:(</h1>
 
-        <?php for ($i = 0; $i < 3; $i++): ?>
+<?php endif; ?>
 
-            <td style="width: 33%; padding: 30px;">
+<?php if(isset($bdVacia) && $bdVacia): ?>
 
-                <img style="max-height: 200px; min-height: 200px; margin-top: 20px;" src="<?=BASE_URL?>assets/images/uploads/productos/<?=$recomendados[$i]->getImagen()?>" alt="<?=$recomendados[$i]->getNombre()?>">
+    <h2 style="color: rgb(180, 180, 180)">¡Vaya! Parece que nuestra base de datos está vacía...</h2>
+
+<?php endif; ?>
+
+<?php endif; ?>
+
+<!-- Si estamos en modo categoría y hay paginación, mostramos la barra superior -->
+
+<?php if ($modoCategoria && !empty($recomendados) && $totalPag > 1): 
+        $prev = ($pag > 1) ? $pag - 1 : 1;
+        $next = ($pag < $totalPag) ? $pag + 1 : $totalPag;
+?>
+
+    <div class="paginacion" style="text-align: center; margin-bottom: 20px;">
+
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>">
+            <button class="boton <?= ($pag == 1) ? 'disabled' : '' ?>">
+                <img src="<?= BASE_URL ?>assets/images/left.svg" alt="Página anterior">
+            </button>
+        </a>
+
+        <h1>Pág. <?= $pag ?></h1>
+
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>">
+            <button class="boton <?= ($pag == $totalPag) ? 'disabled' : '' ?>">
+                <img src="<?= BASE_URL ?>assets/images/right.svg" alt="Página siguiente">
+            </button>
+        </a>
+
+    </div>
+
+<?php endif; ?>
+
+<?php if (!empty($recomendados)): ?>
+
+    <table style="width:100%;">
+
+        <?php 
+
+        // Dividir los productos en filas de 3
+
+        $chunks = array_chunk($recomendados, 3);
+
+        // Alternar colores de fila
+        
+        $bgColors = ["white", "#f2f2f2"];
+        $rowIndex = 0;
+
+        foreach ($chunks as $row):
+            $bg = $bgColors[$rowIndex % 2];
+        ?>
+
+        <tr style="background-color: <?= $bg ?>;">
+
+            <?php foreach ($row as $producto): ?>
+
+            <td style="width: 33%; padding: 30px; vertical-align: top;">
+
+                <img style="max-height: 200px; min-height: 200px; margin-top: 20px;" 
+                    src="<?= BASE_URL ?>assets/images/uploads/productos/<?= $producto->getImagen() ?>" 
+                    alt="<?= $producto->getNombre() ?>">
+
+                <h2 style="margin-bottom: 0px;"><?= $producto->getNombre() ?></h2>
+
+                <p style="margin: 4px; margin-bottom: 10px; color: gray;">
+                    <?= Categoria::getById($producto->getCategoriaId())->getNombre() ?>
+                </p>
+
+                <?php if ($producto->getOferta() > 0): ?>
+
+                    <h3 style="margin: 4px; color: red; text-decoration: line-through;">
+                        <?= $producto->getPrecio() ?> €
+                    </h3>
+
+                    <h1 style="margin: 4px;">
+                        <?= round($producto->getPrecio() * (1 - $producto->getOferta() / 100), 2) ?> €
+                        <span style="font-size: 70%; opacity: 0.3">(-<?= $producto->getOferta() ?>%)</span>
+                    </h1>
                     
-                <h2 style="margin-bottom: 0px;"><?=$recomendados[$i]->getNombre()?></h2>
-                
-                <p style="margin: 4px; margin-bottom: 10px; color: gray"><?=Categoria::getById($recomendados[$i]->getCategoriaId())->getNombre()?></p>
-            
-                <?php if ($recomendados[$i]->getOferta() > 0): ?>
-
-                    <h3 style="margin: 4px; color: red; text-decoration: line-through;"><?=$recomendados[$i]->getPrecio()?> €</h3>
-                    <h1 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> € <span style="font-size: 70%; opacity: 0.3">(-<?=$recomendados[$i]->getOferta()?>%)</span></h1>
-
                 <?php else: ?>
 
-                    <h1 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h1>
+                    <h1 style="margin: 4px;"><?= $producto->getPrecio() ?> €</h1>
 
                 <?php endif; ?>
-                
-                <a href="<?=BASE_URL?>producto/ver&id=<?=$recomendados[$i]->getId()?>" class="boton">
+
+                <a href="<?= BASE_URL ?>producto/ver&id=<?= $producto->getId() ?>" class="boton">
                     <button style="margin-top: 20px;">Ver Producto</button>
                 </a>
 
             </td>
 
-        <?php endfor; ?>
+            <?php endforeach; ?>
 
-    </tr>
+            <?php 
 
-    <!-- Mostrar los otros 3 productos -->
+            // Rellenar celdas vacías si la fila tiene menos de 3 elementos
 
-    <tr style="background-color: #f2f2f2;">
+            $faltantes = 3 - count($row);
 
-        <?php for ($i = 3; $i < 6; $i++): ?>
+            for ($i = 0; $i < $faltantes; $i++):
+            ?>
+                <td style="width: 33%; padding: 30px;"></td>
 
-            <td style="width: 33%; padding: 30px;">
+            <?php endfor; ?>
 
-                <img style="max-height: 200px; min-height: 200px; margin-top: 20px;" src="<?=BASE_URL?>assets/images/uploads/productos/<?=$recomendados[$i]->getImagen()?>" alt="<?=$recomendados[$i]->getNombre()?>">
-                    
-                <h2 style="margin-bottom: 0px;"><?=$recomendados[$i]->getNombre()?></h2>
-                
-                <p style="margin: 4px; margin-bottom: 10px; color: gray"><?=Categoria::getById($recomendados[$i]->getCategoriaId())->getNombre()?></p>
-            
-                <?php if ($recomendados[$i]->getOferta() > 0): ?>
+        </tr>
 
-                    <h3 style="margin: 4px; color: red; text-decoration: line-through;"><?=$recomendados[$i]->getPrecio()?> €</h3>
-                    <h1 style="margin: 4px;"><?=round($recomendados[$i]->getPrecio() * (1 - $recomendados[$i]->getOferta() / 100), 2)?> € <span style="font-size: 70%; opacity: 0.3">(-<?=$recomendados[$i]->getOferta()?>%)</span></h1>
+        <?php 
+            $rowIndex++;
+        endforeach; 
+        ?>
+        
+    </table>
 
-                <?php else: ?>
+<?php endif; ?>
 
-                    <h1 style="margin: 4px;"><?=$recomendados[$i]->getPrecio()?> €</h1>
+<!-- Mostrar de nuevo la paginación inferior en modo categoría -->
 
-                <?php endif; ?>
-                
-                <a href="<?=BASE_URL?>producto/ver&id=<?=$recomendados[$i]->getId()?>" class="boton">
-                    <button style="margin-top: 20px;">Ver Producto</button>
-                </a>
+<?php if ($modoCategoria && !empty($recomendados) && $totalPag > 1): ?>
 
-            </td>
+    <div class="paginacion" style="text-align: center; margin-top: 20px;">
 
-        <?php endfor; ?>
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>">
+            <button class="boton <?= ($pag == 1) ? 'disabled' : '' ?>">
+                <img src="<?= BASE_URL ?>assets/images/left.svg" alt="Página anterior">
+            </button>
+        </a>
 
-    </tr>
+        <h1>Pág. <?= $pag ?></h1>
 
-</table>
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>">
+            <button class="boton <?= ($pag == $totalPag) ? 'disabled' : '' ?>">
+                <img src="<?= BASE_URL ?>assets/images/right.svg" alt="Página siguiente">
+            </button>
+        </a>
+        
+    </div>
+
+<?php endif; ?>

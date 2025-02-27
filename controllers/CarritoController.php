@@ -79,6 +79,10 @@
 
                             $_SESSION['carritoResultado'] = 'complete';
 
+                            // Guardamos la cookie del carrito
+
+                            Utils::saveCookieCarrito();
+
                         } else {
 
                             $_SESSION['carritoResultado'] = 'failed_stock';
@@ -91,6 +95,7 @@
 
                     }
 
+                    Utils::saveCookieCarrito();
                     header('Location: ' . BASE_URL . ($producto_id ? 'producto/ver&id=' . $producto_id : ''));
                     exit;
 
@@ -129,10 +134,12 @@
 
                     if (count($_SESSION['carrito']) == 0) {
                         Utils::deleteSession('carrito');
+                        Utils::deleteCookieCarrito();
                     }
 
                 }
         
+                Utils::saveCookieCarrito();
                 header('Location: ' . BASE_URL . 'carrito/gestion');
                 exit;
 
@@ -143,7 +150,26 @@
 
             }
 
-        }        
+        }
+
+        public function clear() {
+
+            if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+
+                Utils::deleteSession('carrito');
+                Utils::deleteCookieCarrito();
+
+                header('Location: ' . BASE_URL . 'carrito/gestion');
+                exit;
+
+            } else {
+
+                header('Location: ' . BASE_URL);
+                exit;
+
+            }
+
+        }
 
         public function up() {
 
@@ -170,6 +196,7 @@
 
                 }
 
+                Utils::saveCookieCarrito();
                 header('Location: ' . BASE_URL . 'carrito/gestion');
                 exit;
 
@@ -196,12 +223,16 @@
 
                         unset($_SESSION['carrito'][$indice]);
 
-                        if (count($_SESSION['carrito']) == 0) Utils::deleteSession('carrito');
+                        if (count($_SESSION['carrito']) == 0) {
+                            Utils::deleteSession('carrito');
+                            Utils::deleteCookieCarrito();
+                        }
 
                     }
 
                 }
 
+                Utils::saveCookieCarrito();
                 header('Location: ' . BASE_URL . 'carrito/gestion');
                 exit;
 

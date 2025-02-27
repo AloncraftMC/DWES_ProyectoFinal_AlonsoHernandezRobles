@@ -17,7 +17,7 @@
     <!-- Casilla para recordar el usuario con una cookie que dura 7 días -->
     <div class="form-group checkbox-group">
         <input type="checkbox" id="remember" name="remember" <?= (isset($_SESSION['form_data']) && isset($_SESSION['form_data']['remember']) && $_SESSION['form_data']['remember']) ? 'checked' : '' ?>>
-        <label for="remember">Recordar usuario durante 7 días</label>
+        <label for="remember" style="font-weight: normal; margin-top: 5px"><span style="font-weight: bold">Recordar usuario</span> durante 7 días</span></label>
     </div>
 
     <button type="submit">Iniciar Sesión</button>

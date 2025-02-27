@@ -79,75 +79,89 @@
         </select>
     </div>
 
-    <!-- Sección de Imagen -->
     <div class="form-group">
+
         <label for="imagen">Imagen</label>
-        <input type="file" name="imagen" id="imagen-input">
+        <input type="file" name="imagen" style="cursor: pointer;">
+
+        <?php if(isset($_SESSION['gestion']) && $_SESSION['gestion'] == 'failed_imagen'): ?>
+
+            <small class="error">La imagen debe ser jpg, png o svg.</small>
+            <?php Utils::deleteSession('gestion'); ?>
+
+        <?php endif; ?>
         
-        <div id="error-imagen" style="display: none;">
+        <div id="error-imagen" style="display: none; margin-top: 10px;">
             <small class="error">La imagen debe ser jpg, png o svg.</small>
         </div>
 
-        <div style="margin-top: 10px; display: flex; justify-content: center; align-items: center; width: 100%;">
-            <?php
-            
-                $imagenActual = $usuario->getImagen();
-                $imagenURL = $imagenActual ? BASE_URL . "assets/images/uploads/usuarios/" . $imagenActual : "#";
-            ?>
-            <img id="imagen-preview" src="<?= $imagenURL ?>" alt="Vista previa de la imagen" style="<?= $imagenActual ? 'display: block;' : 'display: none;' ?> min-height: 100px; max-height: 100px; border-radius: 5px;">
-            <button id="eliminar-imagen" type="button" class="delete-image" style="display: none; margin-left: 10px;">
+        <div style="margin-top: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
+            <img id="imagen-preview" src="<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>?t=<?=time()?>" alt="Vista previa de la imagen" style="display: block; min-height: 100px; max-height: 100px; border-radius: 5px; margin-bottom: 15px;">
+            <button id="eliminar-imagen" type="button" class="delete-image">
                 Eliminar imagen
             </button>
         </div>
 
         <script>
-            (function(){
-                const inputImagen = document.querySelector('#imagen-input');
-                const imagenPreview = document.querySelector('#imagen-preview');
-                const btnEliminar = document.querySelector('#eliminar-imagen');
+
+            document.querySelector('input[name="imagen"]').addEventListener('change', function () {
+
+                const file = this.files[0];
+                const preview = document.querySelector('#imagen-preview');
                 const errorImagen = document.getElementById('error-imagen');
-                // Guardamos la URL original para poder restaurarla
-                const originalSrc = imagenPreview.getAttribute('src');
+                const btnEliminar = document.querySelector('#eliminar-imagen');
 
-                inputImagen.addEventListener('change', function() {
-                    const imagen = this.files[0];
-                    if (imagen) {
-                        const extension = imagen.name.split('.').pop().toLowerCase();
-                        const extensionesValidas = ['jpg', 'jpeg', 'png', 'svg'];
-                        
-                        if (extensionesValidas.includes(extension)) {
-                            errorImagen.style.display = 'none';
-                            const reader = new FileReader();
-                            
-                            reader.onload = function(e) {
-                                // Mostramos la imagen seleccionada en el preview
-                                imagenPreview.src = e.target.result;
-                                imagenPreview.style.display = 'block';
-                                imagenPreview.style.marginTop = '20px';
-                                // Mostramos el botón para eliminar la nueva imagen
-                                btnEliminar.style.display = 'block';
-                                btnEliminar.style.marginTop = '30px';
-                            };
-                            
-                            reader.readAsDataURL(imagen);
-                        } else {
-                            // En caso de formato no válido, mostramos error y limpiamos el input
-                            errorImagen.style.display = 'block';
-                            inputImagen.value = '';
-                        }
+                if (file) {
+
+                    const allowedTypes = ["image/jpeg", "image/jpg", "image/png", "image/svg+xml"];
+
+                    if (allowedTypes.includes(file.type)) {
+
+                        const reader = new FileReader();
+
+                        reader.onload = function () {
+                            errorImagen.style.display = 'none'; // Ocultar error antes de mostrar la imagen
+                            preview.src = reader.result;
+                            preview.style.display = 'block';
+                            btnEliminar.style.display = 'block';
+                        };
+
+                        reader.readAsDataURL(file);
+
+                    } else {
+
+                        errorImagen.style.display = 'block'; // Mostrar error antes de ocultar la imagen
+                        preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                        preview.style.display = 'block';
+                        btnEliminar.style.display = 'none'; // Ahora sí, ocultamos el botón
+                        this.value = ''; // Limpiar el input
+
                     }
-                });
 
-                btnEliminar.addEventListener('click', function() {
-                    // Al pulsar "Eliminar imagen", se restaura la imagen original...
-                    imagenPreview.src = originalSrc;
-                    // ...se oculta el botón eliminar...
-                    btnEliminar.style.display = 'none';
-                    // ...y se limpia el input file.
-                    inputImagen.value = '';
-                });
-            })();
+                } else {
+
+                    preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                    preview.style.display = 'block';
+                    errorImagen.style.display = 'none';
+
+                }
+
+            });
+
+            document.querySelector('#eliminar-imagen').addEventListener('click', function () {
+
+                const inputImagen = document.querySelector('input[name="imagen"]');
+                const preview = document.querySelector('#imagen-preview');
+
+                preview.src = '<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>';
+                preview.style.display = 'block';
+                inputImagen.value = ''; // Elimina la imagen del input
+                this.style.display = 'none';
+                
+            });
+
         </script>
+        
     </div>
 
     <button type="submit">Guardar Cambios</button>

@@ -33,7 +33,7 @@
                     </li>
                 <?php else: ?>
                     <li>
-                        <h2>Precio: <span class="value"><?=$producto->getPrecio()?> €</span></h2>
+                        <h2>Precio: <span class="value" style="font-weight: bold;"><?=$producto->getPrecio()?> €</span></h2>
                     </li>
                 <?php endif; ?>
 
