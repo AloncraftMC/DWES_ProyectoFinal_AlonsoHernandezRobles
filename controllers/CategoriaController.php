@@ -20,7 +20,7 @@
 
             $categorias = Categoria::getAll();
 
-            $totalPag = ceil(count($categorias) / $categoriasPorPagina);
+            $totalPag = max(1, ceil(count($categorias) / $categoriasPorPagina));
             $categorias = array_slice($categorias, ($_SESSION['pag'] - 1) * $categoriasPorPagina, $categoriasPorPagina);
 
             if($totalPag == 0) $totalPag = 1;
@@ -81,7 +81,7 @@
                 if($_SESSION['create'] == 'complete'){
 
                     Utils::deleteSession('form_data');
-                    header("Location:" . BASE_URL . "categoria/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                    header("Location:" . BASE_URL . "categoria/admin&pag=" . max(1, ceil(count(Categoria::getAll()) / ITEMS_PER_PAGE))); // Redirigimos a la última página
                     exit;
 
                 }else{

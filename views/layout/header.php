@@ -51,7 +51,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda</title>
+    <title><?= isset($titulo) ? $titulo : 'Tienda de Señales de Tráfico'; ?></title>
     <!-- Le añado lo del time() para que no se quede en cache -->
     <link rel="stylesheet" href="<?=BASE_URL?>assets/css/style.css?v=<?=time()?>" type="text/css">
     <link rel="icon" type="image/svg+xml" href="<?=BASE_URL?>assets/images/logo.svg">

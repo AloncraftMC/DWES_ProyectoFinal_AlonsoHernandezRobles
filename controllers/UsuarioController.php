@@ -136,7 +136,7 @@
                         if (isset($_SESSION['admin'])) {
 
                             Utils::deleteSession('register');
-                            header("Location:" . BASE_URL . "usuario/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                            header("Location:" . BASE_URL . "usuario/admin&pag=" . max(1, ceil(count(Usuario::getAll()) / ITEMS_PER_PAGE))); // Redirigimos a la última página
                         
                         } else {
 

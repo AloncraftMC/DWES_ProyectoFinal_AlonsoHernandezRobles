@@ -24,6 +24,8 @@ if (isset($_GET['categoria'])) {
     $categoria = Categoria::getById($_GET['categoria']);
     $modoCategoria = true;
 
+    echo "<h2 style='margin-top: 0px; color: rgb(0,79,173);;'>Por categoría: " . $categoria->getNombre() . "</h2>";
+
     // Filtrar productos de la categoría indicada
 
     $productosFiltrados = [];
@@ -48,17 +50,13 @@ if (isset($_GET['categoria'])) {
         
         $pag = isset($_GET['pag']) ? (int)$_GET['pag'] : 1;
         $totalProductos = count($productosFiltrados);
-        $totalPag = ceil($totalProductos / $productosPorPagina);
+        $totalPag = max(1, ceil($totalProductos / $productosPorPagina));
 
         if ($pag < 1) $pag = 1;
         if ($pag > $totalPag) $pag = $totalPag;
 
         $offset = ($pag - 1) * $productosPorPagina;
         $recomendados = array_slice($productosFiltrados, $offset, $productosPorPagina);
-        
-        // Mostrar header de categoría
-
-        $mostrarHeader = true;
 
     }
 
@@ -87,34 +85,47 @@ if (isset($_GET['categoria'])) {
     
 }
 
-if(isset($mostrarHeader) && $mostrarHeader){
-
-    echo "<h2 style='margin-top: 0px; color: rgb(0,79,173);;'>Por categoría: " . $categoria->getNombre() . "</h2>";
-
-}
-
 ?>
 
 <!-- Mostrar barra de categorías solo si hay alguna -->
 
-<?php
-    $categorias = Categoria::getAll();
-    if (!empty($categorias)):
-?>
+<?php $categorias = Categoria::getAll(); ?>
 
-<div style="margin-top: 20px; margin-bottom: 20px; display: flex; flex-wrap: wrap; justify-content: center;">
+<?php if (!empty($categorias)): ?>
 
-    <?php foreach ($categorias as $cat): ?>
+    <div class="carousel-container">
+        <!-- Botón Izquierdo -->
+        <button id="prev" class="carousel-btn">&#10094;</button>
 
-        <div style="margin: 10px;">
-            <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $cat->getId() ?>" class="boton">
-                <button style="width: 200px;"><?= $cat->getNombre() ?></button>
-            </a>
+        <div id="carousel" class="carousel">
+            <?php foreach ($categorias as $cat): ?>
+                <div class="carousel-item">
+                    <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $cat->getId() ?>" class="boton">
+                        <button><?= $cat->getNombre() ?></button>
+                    </a>
+                </div>
+            <?php endforeach; ?>
         </div>
 
-    <?php endforeach; ?>
+        <!-- Botón Derecho -->
+        <button id="next" class="carousel-btn">&#10095;</button>
+    </div>
 
-</div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let carousel = document.getElementById("carousel");
+            let prev = document.getElementById("prev");
+            let next = document.getElementById("next");
+
+            prev.addEventListener("click", function() {
+                carousel.scrollLeft -= 500; // Ajusta según el tamaño de los botones
+            });
+
+            next.addEventListener("click", function() {
+                carousel.scrollLeft += 500;
+            });
+        });
+    </script>
 
 <?php endif; ?>
 
@@ -146,7 +157,7 @@ if(isset($mostrarHeader) && $mostrarHeader){
         </a>
 
         <h1>Pág. <?= $pag ?></h1>
-
+        
         <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>">
             <button class="boton <?= ($pag == $totalPag) ? 'disabled' : '' ?>">
                 <img src="<?= BASE_URL ?>assets/images/right.svg" alt="Página siguiente">

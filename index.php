@@ -8,6 +8,8 @@
 
     use controllers\ErrorController;
     use helpers\Utils;
+    use models\Categoria;
+    use models\Producto;
     use models\Usuario;
 
     // Autoload, Configuración y Clase Utils
@@ -44,6 +46,56 @@
 
         }
         
+    }
+
+    // Genero el título de la página
+
+    $titulo = "Tienda de Señales de Tráfico";
+
+    if (isset($_GET['controller'])) {
+
+        $controller = $_GET['controller'];
+        $action = $_GET['action'] ?? 'index';
+        $id = $_GET['id'] ?? null;
+        
+        $titulos = [
+            'producto' => [
+                'ver' => (isset($id) && $controller == 'producto' ? Producto::getById($id)->getNombre() : 'Ver Producto'),
+                'admin' => 'Administrar Productos',
+                'crear' => 'Crear Producto',
+                'editar' => 'Editar ' . (isset($id) && $controller == 'producto' ? Producto::getById($id)->getNombre() : 'Producto'),
+                'recomendados' => 'Tienda de Señales de Tráfico'
+            ],
+            'categoria' => [
+                'admin' => 'Administrar Categorías',
+                'crear' => 'Crear Categoría',
+                'editar' => 'Editar ' . (isset($id) && $controller == 'categoria' ? Categoria::getById($id)->getNombre() : 'Categoría')
+            ],
+            'usuario' => [
+                'login' => 'Iniciar Sesión',
+                'registrarse' => 'Registrarse',
+                'admin' => 'Administrar Usuarios',
+                'gestion' => 'Perfil de Usuario (' . $_SESSION['identity']['nombre'] . ')',
+                'editar' => 'Editar ' . (isset($id) && $controller == 'usuario' ? Usuario::getById($id)->getNombre() : 'Usuario'),
+                'crear' => 'Crear Usuario'
+            ],
+            'pedido' => [
+                'admin' => 'Administrar Pedidos',
+                'crear' => 'Realizar Pedido',
+                'ver' => 'Detalles del Pedido',
+                'listo' => 'Pedido Solicitado'
+            ],
+            'carrito' => [
+                'gestion' => 'Carrito de Compras' . (isset($_SESSION['carrito']) ? ' (' . count($_SESSION['carrito']) . ')' : '')
+            ]
+        ];
+
+        // Asignar título si existe en la matriz, sino generar uno genérico
+        if (isset($titulos[$controller][$action])) {
+            $titulo = $titulos[$controller][$action];
+        } else {
+            $titulo = ucfirst($controller) . " - " . ucfirst($action);
+        }
     }
 
     // Requiero el header

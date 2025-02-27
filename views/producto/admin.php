@@ -4,7 +4,15 @@
 
 <!-- Si no hay categorías, mostramos un mensaje informativo al hacer hover sobre el botón, que además sería disabled en ese caso -->
 
-<a style="pointer-events: none;" href="<?=BASE_URL?>producto/crear" title="<?php if(count(Categoria::getAll()) == 0) echo 'Para crear productos, primero debes crear categorías.' ?>">
+<?php if(count(Categoria::getAll()) == 0): ?>
+
+    <a href="<?=BASE_URL?>producto/crear" title="Para crear productos, primero debes crear categorías." style="pointer-events: none;">
+
+<?php else: ?>
+
+    <a href="<?=BASE_URL?>producto/crear">
+
+<?php endif; ?>
 
     <button class="boton more-margin <?php if(count(Categoria::getAll()) == 0) echo 'disabled' ?>">
         Crear Producto

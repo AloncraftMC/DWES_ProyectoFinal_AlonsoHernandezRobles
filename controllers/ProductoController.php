@@ -12,21 +12,21 @@
 
             Utils::deleteSession('redirect_after_login');
 
-            $productosPorPagina = ITEMS_PER_PAGE;
+            $productosPorPagina = PRODUCTS_PER_PAGE;
 
             $_SESSION['pag'] = isset($_GET['pag']) ? (int)$_GET['pag'] : 1;
 
             $productos = Producto::getAll();
 
-            $totalPag = ceil(count($productos) / $productosPorPagina);
+            $totalPag = max(1, ceil(count($productos) / $productosPorPagina));
             $productos = array_slice($productos, ($_SESSION['pag'] - 1) * $productosPorPagina, $productosPorPagina);
 
             if($totalPag == 0) $totalPag = 1;
 
             // Ahora redirigimos a la primera o última página si la página es menor que 1 o mayor que el total de páginas
             
-            if($_SESSION['pag'] < 1) header("Location:" . BASE_URL . "producto/recomendados&pag=1");
-            if($_SESSION['pag'] > $totalPag) header("Location:" . BASE_URL . "producto/recomendados&pag=" . $totalPag);
+            if($_SESSION['pag'] < 1) header("Location:" . BASE_URL . "producto/recomendados" . (isset($_GET['categoria']) ? "&categoria=" . $_GET['categoria'] : "") . "&pag=1");
+            if($_SESSION['pag'] > $totalPag) header("Location:" . BASE_URL . "producto/recomendados" . (isset($_GET['categoria']) ? "&categoria=" . $_GET['categoria'] : "") . "&pag=" . $totalPag);
 
             require_once 'views/producto/recomendados.php';
             
@@ -44,7 +44,7 @@
 
             $productos = Producto::getAll();
 
-            $totalPag = ceil(count($productos) / $productosPorPagina);
+            $totalPag = max(1, ceil(count($productos) / $productosPorPagina));
             $productos = array_slice($productos, ($_SESSION['pag'] - 1) * $productosPorPagina, $productosPorPagina);
 
             if($totalPag == 0) $totalPag = 1;
@@ -194,7 +194,7 @@
                         }
 
                         $_SESSION['create'] = 'complete';
-                        header("Location:" . BASE_URL . "producto/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        header("Location:" . BASE_URL . "producto/admin&pag=" . max(1, ceil(count(Producto::getAll()) / PRODUCTS_PER_PAGE))); // Redirigimos a la última página
                         exit();
                     
                     }else{
