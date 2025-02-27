@@ -10,7 +10,14 @@
         // Método para mostrar la vista de registrarse
 
         public function registrarse(): void{
+
+            if(isset($_SESSION['identity'])){
+                header("Location:" . BASE_URL);
+                exit;
+            }
+
             require_once 'views/usuario/registrarse.php';
+        
         }
 
         // Método para guardar un usuario en la base de datos
@@ -138,7 +145,7 @@
                         }
         
                     } else {
-
+                        
                         $_SESSION['register'] = 'failed';
                         header("Location:" . BASE_URL . "usuario/" . (isset($_SESSION['admin']) ? 'crear' : 'registrarse'));
                         exit;
@@ -155,7 +162,7 @@
 
         
             } else {
-
+                
                 header("Location:" . BASE_URL);
                 exit;
 
@@ -588,8 +595,9 @@
         
                         Utils::deleteSession('identity');
                         Utils::deleteSession('admin');
-        
+
                         header("Location:" . BASE_URL);
+                        exit;
         
                     }
         
@@ -649,7 +657,7 @@
 
             $usuarios = Usuario::getAll();
 
-            $totalPag = ceil(count($usuarios) / $usuariosPorPagina);
+            $totalPag = max(1, ceil(count($usuarios) / $usuariosPorPagina));
             $usuarios = array_slice($usuarios, ($_SESSION['pag'] - 1) * $usuariosPorPagina, $usuariosPorPagina);
 
             // Ahora redirigimos a la primera o última página si la página es menor que 1 o mayor que el total de páginas

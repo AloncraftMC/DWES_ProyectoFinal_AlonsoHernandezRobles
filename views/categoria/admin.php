@@ -8,7 +8,7 @@
 
 <?php if(count($categorias) == 0): ?>
 
-    <h3>No hay categorías</h3>
+    <h3>No hay categorías.</h3>
 
 <?php else: ?>
 

@@ -7,6 +7,8 @@ use models\Producto;
 // Recuperamos todos los productos
 $todos = Producto::getAll();
 
+$bdVacia = ($todos == null);
+
 // Bandera para saber si estamos en modo "por categoría"
 $modoCategoria = false;
 
@@ -114,19 +116,17 @@ if(isset($mostrarHeader) && $mostrarHeader){
 
 </div>
 
+<?php endif; ?>
+
 <?php if(isset($noHayProductos) && $noHayProductos): ?>
 
     <h2 style="color: gray">Aún no hay productos en esta categoría...</h2>
 
     <h1 style="font-size: 500%">:(</h1>
 
-<?php endif; ?>
-
-<?php if(isset($bdVacia) && $bdVacia): ?>
+<?php elseif(isset($bdVacia) && $bdVacia): ?>
 
     <h2 style="color: rgb(180, 180, 180)">¡Vaya! Parece que nuestra base de datos está vacía...</h2>
-
-<?php endif; ?>
 
 <?php endif; ?>
 

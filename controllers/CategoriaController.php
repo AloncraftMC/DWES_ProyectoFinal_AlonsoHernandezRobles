@@ -211,7 +211,7 @@
                 foreach ($productos as $producto) {
 
                     $imagen = $producto->getImagen();
-                    $uploadDir = 'assets/images/uploads/';
+                    $uploadDir = 'assets/images/uploads/productos/';
 
                     if ($imagen && is_file($uploadDir . $imagen)) unlink($uploadDir . $imagen);
 

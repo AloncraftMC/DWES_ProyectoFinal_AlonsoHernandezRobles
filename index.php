@@ -37,6 +37,12 @@
             ];
 
         }
+
+        if($usuario->getRol() == 'admin'){
+
+            $_SESSION['admin'] = true;
+
+        }
         
     }
 
