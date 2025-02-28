@@ -51,6 +51,8 @@
 
         public function update(): bool {
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("UPDATE categorias SET nombre = :nombre WHERE id = :id", [
                 ':nombre' => $this->nombre,
                 ':id' => $this->id

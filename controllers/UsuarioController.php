@@ -410,25 +410,25 @@
                     // Validaciones
                     if ($nombre && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $nombre)) {
                         $_SESSION['gestion'] = "failed_nombre";
-                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                         exit;
                     }
         
                     if ($apellidos && !preg_match("/^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]{2,}$/u", $apellidos)) {
                         $_SESSION['gestion'] = "failed_apellidos";
-                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                         exit;
                     }
         
                     if ($email && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
                         $_SESSION['gestion'] = "failed_email";
-                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                         exit;
                     }
         
                     if (strlen($password) > 0 && !preg_match("/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/", $password)) {
                         $_SESSION['gestion'] = "failed_password";
-                        header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                        header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                         exit;
                     }
         
@@ -439,7 +439,7 @@
                         
                         if (!in_array($imagen['type'], $permitidos) || $imagen['error'] != UPLOAD_ERR_OK) {
                             $_SESSION['gestion'] = 'failed_imagen';
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                             exit;
                         }
 
@@ -477,7 +477,7 @@
                         } else {
 
                             $_SESSION['gestion'] = 'failed';
-                            header("Location:" . BASE_URL . "usuario/gestion&id=" . $id);
+                            header("Location:" . BASE_URL . "usuario/gestion" . (isset($_GET['id']) ? "&id=" . $_GET['id'] : ""));
                             exit;
 
                         }

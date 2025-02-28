@@ -75,7 +75,7 @@
                 'login' => 'Iniciar Sesión',
                 'registrarse' => 'Registrarse',
                 'admin' => 'Administrar Usuarios',
-                'gestion' => 'Perfil de Usuario - ' . $_SESSION['identity']['nombre'],
+                'gestion' => 'Perfil de Usuario - ' . (isset($_SESSION['identity']) ? $_SESSION['identity']['nombre'] : 'Usuario'),
                 'editar' => 'Editar ' . (isset($id) && $controller == 'usuario' ? Usuario::getById($id)->getNombre() : 'Usuario'),
                 'crear' => 'Crear Usuario'
             ],
@@ -91,11 +91,17 @@
         ];
 
         // Asignar título si existe en la matriz, sino generar uno genérico
+        
         if (isset($titulos[$controller][$action])) {
+
             $titulo = $titulos[$controller][$action];
+        
         } else {
+        
             $titulo = ucfirst($controller) . " - " . ucfirst($action);
+        
         }
+    
     }
 
     // Requiero el header
