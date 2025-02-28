@@ -81,7 +81,7 @@
                 if($_SESSION['create'] == 'complete'){
 
                     Utils::deleteSession('form_data');
-                    header("Location:" . BASE_URL . "categoria/admin&pag=" . max(1, ceil(count(Categoria::getAll()) / ITEMS_PER_PAGE))); // Redirigimos a la última página
+                    header("Location:" . BASE_URL . "categoria/admin&pag=" . max(1, ceil(count(Categoria::getAll()) / ITEMS_PER_PAGE)) . "#" . $categoria->getId()); // Redirigimos a la última página
                     exit;
 
                 }else{
@@ -137,7 +137,7 @@
 
                         Utils::deleteSession('form_data');
                         
-                        header("Location:" . BASE_URL . "categoria/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        header("Location:" . BASE_URL . "categoria/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : "") . "#" . $categoria->getId()); // Redirigimos a la última página
                         exit;
 
                     }else{

@@ -22,7 +22,7 @@
 
         <?php foreach($categorias as $categoria): ?>
 
-            <tr>
+            <tr id="<?=$categoria->getId()?>">
 
                 <td><?=$categoria->getId()?></td>
                 <td><?=$categoria->getNombre()?></td>

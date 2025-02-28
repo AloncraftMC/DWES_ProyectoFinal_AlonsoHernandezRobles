@@ -63,7 +63,7 @@
                 'ver' => (isset($id) && $controller == 'producto' ? Producto::getById($id)->getNombre() : 'Ver Producto'),
                 'admin' => 'Administrar Productos',
                 'crear' => 'Crear Producto',
-                'editar' => 'Editar ' . (isset($id) && $controller == 'producto' ? Producto::getById($id)->getNombre() : 'Producto'),
+                'gestion' => 'Editar ' . (isset($id) && $controller == 'producto' ? Producto::getById($id)->getNombre() : 'Producto'),
                 'recomendados' => 'Tienda de Señales de Tráfico'
             ],
             'categoria' => [
@@ -75,7 +75,7 @@
                 'login' => 'Iniciar Sesión',
                 'registrarse' => 'Registrarse',
                 'admin' => 'Administrar Usuarios',
-                'gestion' => 'Perfil de Usuario (' . $_SESSION['identity']['nombre'] . ')',
+                'gestion' => 'Perfil de Usuario - ' . $_SESSION['identity']['nombre'],
                 'editar' => 'Editar ' . (isset($id) && $controller == 'usuario' ? Usuario::getById($id)->getNombre() : 'Usuario'),
                 'crear' => 'Crear Usuario'
             ],
@@ -86,7 +86,7 @@
                 'listo' => 'Pedido Solicitado'
             ],
             'carrito' => [
-                'gestion' => 'Carrito de Compras' . (isset($_SESSION['carrito']) ? ' (' . count($_SESSION['carrito']) . ')' : '')
+                'gestion' => 'Carrito de Compra' . (isset($_SESSION['carrito']) ? ' (' . count($_SESSION['carrito']) . ')' : '')
             ]
         ];
 

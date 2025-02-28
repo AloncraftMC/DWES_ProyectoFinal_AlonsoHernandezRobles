@@ -194,7 +194,7 @@
                         }
 
                         $_SESSION['create'] = 'complete';
-                        header("Location:" . BASE_URL . "producto/admin&pag=" . max(1, ceil(count(Producto::getAll()) / PRODUCTS_PER_PAGE))); // Redirigimos a la última página
+                        header("Location:" . BASE_URL . "producto/admin&pag=" . max(1, ceil(count(Producto::getAll()) / PRODUCTS_PER_PAGE)) . "#" . $id); // Redirigimos a la última página
                         exit();
                     
                     }else{
@@ -361,7 +361,7 @@
                         Utils::deleteSession('form_data');
 
                         $_SESSION['gestion'] = 'complete';
-                        header("Location:" . BASE_URL . "producto/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : ""));
+                        header("Location:" . BASE_URL . "producto/admin" . (isset($_SESSION['pag']) ? "&pag=" . $_SESSION['pag'] : "") . "#" . $id);
                         exit();
 
                     }else{

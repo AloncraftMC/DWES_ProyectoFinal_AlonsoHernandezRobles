@@ -22,7 +22,7 @@
 
     <?php foreach($usuarios as $usuario): ?>
 
-        <tr>
+        <tr id="<?=$usuario->getId()?>">
 
             <td><?=$usuario->getId()?></td>
             <td><?=$usuario->getNombre()?></td>

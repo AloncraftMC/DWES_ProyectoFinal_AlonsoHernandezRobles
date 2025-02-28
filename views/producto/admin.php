@@ -49,7 +49,7 @@
 
         <?php foreach($productos as $producto): ?>
 
-            <tr>
+            <tr id="<?=$producto->getId()?>">
 
                 <td><?=$producto->getId()?></td>
 
@@ -57,7 +57,7 @@
 
                 <td><?=$producto->getNombre()?></td>
 
-                <td style="max-width: 700px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                <td style="max-width: 1500px; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
                     <?=(strlen($producto->getDescripcion()) == 0) ? 'Sin descripción' : $producto->getDescripcion()?>
                 </td>
 
