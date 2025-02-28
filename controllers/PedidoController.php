@@ -17,7 +17,7 @@
             
             Utils::isIdentity();
 
-            if(!isset($_SESSION['carrito']) || $_SESSION['carrito']['total'] == 0){
+            if(!isset($_SESSION['carrito']) || Utils::statsCarrito()['count'] == 0){
                 header('Location: '.BASE_URL);
                 exit;
             }
@@ -29,7 +29,7 @@
 
             Utils::isIdentity();
 
-            if(!isset($_SESSION['carrito']) || $_SESSION['carrito']['total'] == 0){
+            if(!isset($_SESSION['carrito']) || Utils::statsCarrito()['count'] == 0){
                 header('Location: '.BASE_URL);
                 exit;
             }
@@ -43,7 +43,7 @@
 
             Utils::isIdentity();
 
-            if(!isset($_SESSION['carrito']) || $_SESSION['carrito']['total'] == 0){
+            if(!isset($_SESSION['carrito']) || Utils::statsCarrito()['count'] == 0){
                 header('Location: '.BASE_URL);
                 exit;
             }
