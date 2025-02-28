@@ -18,7 +18,6 @@
         private BaseDatos $baseDatos;
 
         public function __construct(){
-            $this->baseDatos = new BaseDatos();
         }
 
         /* GETTERS Y SETTERS */
@@ -99,6 +98,8 @@
 
         public function save(): bool {
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("INSERT INTO productos VALUES(null, :categoria_id, :nombre, :descripcion, :precio, :stock, :oferta, :fecha, null)", [
                 ':categoria_id' => $this->categoriaId,
                 ':nombre' => $this->nombre,
@@ -111,12 +112,18 @@
         
             if ($this->baseDatos->getNumeroRegistros() == 1) $this->setId($this->baseDatos->getUltimoId());
         
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
             
         }
         
 
         public function update(): bool {
+
+            $this->baseDatos = new BaseDatos();
 
             if (!isset($this->imagen)) {
 
@@ -141,17 +148,27 @@
                 ':id' => $this->id
             ]);
             
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
         public function delete(): bool {
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("DELETE FROM productos WHERE id = :id", [
                 ':id' => $this->id
             ]);
         
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
@@ -160,6 +177,7 @@
         public static function getById(int $id): ?Producto {
 
             $baseDatos = new BaseDatos();
+
             $baseDatos->ejecutar("SELECT * FROM productos WHERE id = :id", [
                 ':id' => $id
             ]);
@@ -180,9 +198,13 @@
                 $producto->setFecha($registro['fecha']);
                 $producto->setImagen($registro['imagen']);
         
+                $baseDatos->cerrarConexion();
+
                 return $producto;
         
             }
+
+            $baseDatos->cerrarConexion();
         
             return null;
 
@@ -191,6 +213,7 @@
         public static function getByCategoria(int $categoriaId): array {
 
             $baseDatos = new BaseDatos();
+
             $baseDatos->ejecutar("SELECT * FROM productos WHERE categoria_id = :categoria_id", [
                 ':categoria_id' => $categoriaId
             ]);
@@ -216,6 +239,8 @@
                 array_push($productos, $producto);
                 
             }
+
+            $baseDatos->cerrarConexion();
         
             return $productos;
 
@@ -224,6 +249,7 @@
         public static function getAll(): array{
 
             $baseDatos = new BaseDatos();
+            
             $baseDatos->ejecutar("SELECT * FROM productos");
         
             $registros = $baseDatos->getRegistros();
@@ -247,6 +273,8 @@
                 array_push($productos, $producto);
                 
             }
+
+            $baseDatos->cerrarConexion();
         
             return $productos;
 

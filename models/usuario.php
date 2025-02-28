@@ -16,7 +16,6 @@
         private BaseDatos $baseDatos;
         
         public function __construct(){
-            $this->baseDatos = new BaseDatos();
         }
 
         /* GETTERS Y SETTERS */
@@ -80,6 +79,8 @@
         /* MÉTODOS DINÁMICOS */
 
         public function save(): bool{
+
+            $this->baseDatos = new BaseDatos();
             
             $this->baseDatos->ejecutar("INSERT INTO usuarios VALUES(null, :nombre, :apellidos, :email, :password, :rol, null)", [
                 ':nombre' => $this->nombre,
@@ -89,11 +90,17 @@
                 ':rol' => $this->rol
             ]);
 
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
         public function login(): ?Usuario{
+
+            $this->baseDatos = new BaseDatos();
 
             // Buscar el usuario en la base de datos
             
@@ -117,17 +124,24 @@
                     $this->setEmail($usuario['email']);
                     $this->setRol($usuario['rol']);
                     $this->setImagen($usuario['imagen']);
+
+                    $this->baseDatos->cerrarConexion();
+
                     return $this;
 
                 }
 
             }
 
+            $this->baseDatos->cerrarConexion();
+
             return null;
 
         }
 
         public function update(): bool {
+
+            $this->baseDatos = new BaseDatos();
 
             if(!$this->password || strlen($this->password) == 0) $this->password = null;
             
@@ -174,17 +188,27 @@
         
             $this->baseDatos->ejecutar($query, $params);
         
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
         public function delete(): bool{
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("DELETE FROM usuarios WHERE id = :id", [
                 ':id' => $this->id
             ]);
 
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
@@ -193,6 +217,7 @@
         public static function getById(int $id): ?Usuario {
 
             $baseDatos = new BaseDatos();
+
             $baseDatos->ejecutar("SELECT * FROM usuarios WHERE id = :id", [
                 ':id' => $id
             ]);
@@ -210,9 +235,13 @@
                 $usuario->setRol($registro['rol']);
                 $usuario->setImagen($registro['imagen']);
 
+                $baseDatos->cerrarConexion();
+
                 return $usuario;
 
             }
+
+            $baseDatos->cerrarConexion();
 
             return null;
 
@@ -221,6 +250,7 @@
         public static function getByEmail(string $email): ?Usuario {
 
             $baseDatos = new BaseDatos();
+
             $baseDatos->ejecutar("SELECT * FROM usuarios WHERE email = :email", [
                 ':email' => $email
             ]);
@@ -238,9 +268,13 @@
                 $usuario->setRol($registro['rol']);
                 $usuario->setImagen($registro['imagen']);
 
+                $baseDatos->cerrarConexion();
+
                 return $usuario;
 
             }
+
+            $baseDatos->cerrarConexion();
 
             return null;
 
@@ -249,6 +283,7 @@
         public static function getAll(): array {
 
             $baseDatos = new BaseDatos();
+            
             $baseDatos->ejecutar("SELECT * FROM usuarios");
         
             $registros = $baseDatos->getRegistros();
@@ -269,6 +304,8 @@
                 $usuarios[] = $usuario;
                 
             }
+
+            $baseDatos->cerrarConexion();
         
             return $usuarios;
             

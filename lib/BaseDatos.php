@@ -13,8 +13,8 @@
         private string $contrasena;
         private string $nombre;
 
-        private PDO $conexion;
-        private PDOStatement $resultado;
+        private ?PDO $conexion;
+        private ?PDOStatement $resultado;
 
         // Constructor de la base de datos
 
@@ -51,7 +51,7 @@
 
             }catch(PDOException $e){
 
-                echo $e->getMessage();
+                throw new PDOException("Error de conexión: " . $e->getMessage());
 
             }
 
@@ -75,6 +75,17 @@
 
         public function getUltimoId(): string{
             return $this->conexion->lastInsertId();
+        }
+
+        /* Cierre de la conexión con la base de datos */
+
+        public function cerrarConexion(): void {
+            $this->conexion = null;
+            $this->resultado = null;
+        }
+    
+        public function __destruct() {
+            $this->cerrarConexion();
         }
 
     }

@@ -11,7 +11,6 @@
         private BaseDatos $baseDatos;
 
         public function __construct(){
-            $this->baseDatos = new BaseDatos();
         }
 
         /* GETTERS Y SETTERS */
@@ -36,11 +35,17 @@
 
         public function save(): bool{
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("INSERT INTO categorias VALUES(null, :nombre)", [
                 ':nombre' => $this->nombre
             ]);
 
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+            
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
@@ -50,18 +55,28 @@
                 ':nombre' => $this->nombre,
                 ':id' => $this->id
             ]);
+
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
             
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
         public function delete(): bool{
 
+            $this->baseDatos = new BaseDatos();
+
             $this->baseDatos->ejecutar("DELETE FROM categorias WHERE id = :id", [
                 ':id' => $this->id
             ]);
 
-            return $this->baseDatos->getNumeroRegistros() == 1;
+            $output = $this->baseDatos->getNumeroRegistros() == 1;
+            
+            $this->baseDatos->cerrarConexion();
+
+            return $output;
 
         }
 
@@ -70,6 +85,7 @@
         public static function getById(int $id): ?Categoria {
 
             $baseDatos = new BaseDatos();
+
             $baseDatos->ejecutar("SELECT * FROM categorias WHERE id = :id", [
                 ':id' => $id
             ]);
@@ -83,9 +99,13 @@
                 $categoria->setId($registro['id']);
                 $categoria->setNombre($registro['nombre']);
 
+                $baseDatos->cerrarConexion();
+
                 return $categoria;
 
             }
+
+            $baseDatos->cerrarConexion();
 
             return null;
 
@@ -94,6 +114,7 @@
         public static function getAll(): array {
 
             $baseDatos = new BaseDatos();
+            
             $baseDatos->ejecutar("SELECT * FROM categorias");
         
             $registros = $baseDatos->getRegistros();
@@ -110,6 +131,8 @@
                 array_push($categorias, $categoria);
                 
             }
+
+            $baseDatos->cerrarConexion();
         
             return $categorias;
             

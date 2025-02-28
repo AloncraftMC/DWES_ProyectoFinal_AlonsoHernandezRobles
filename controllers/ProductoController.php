@@ -15,7 +15,7 @@
             $productosPorPagina = PRODUCTS_PER_PAGE;
 
             $_SESSION['pag'] = isset($_GET['pag']) ? (int)$_GET['pag'] : 1;
-
+            
             $productos = Producto::getAll();
 
             $totalPag = max(1, ceil(count($productos) / $productosPorPagina));
