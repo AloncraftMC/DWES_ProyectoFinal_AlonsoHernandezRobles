@@ -150,7 +150,13 @@ if (isset($_GET['categoria'])) {
 
     <div class="paginacion" style="text-align: center; margin-bottom: 20px;">
 
-        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>">
+        <a href="<?=BASE_URL?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=1" style="pointer-events: <?=($_SESSION['pag'] == 1) ? 'none' : 'auto'?>;">
+            <button class="boton <?php if($_SESSION['pag'] == 1) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/doubleleft.png" alt="Primera página" style="width: 10px; padding: 5px;">
+            </button>
+        </a>
+
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>" style="pointer-events: <?=($pag == 1) ? 'none' : 'auto'?>;">
             <button class="boton <?= ($pag == 1) ? 'disabled' : '' ?>">
                 <img src="<?= BASE_URL ?>assets/images/left.svg" alt="Página anterior">
             </button>
@@ -158,9 +164,15 @@ if (isset($_GET['categoria'])) {
 
         <h1>Pág. <?= $pag ?></h1>
         
-        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>">
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>" style="pointer-events: <?=($pag == $totalPag) ? 'none' : 'auto'?>;">
             <button class="boton <?= ($pag == $totalPag) ? 'disabled' : '' ?>">
                 <img src="<?= BASE_URL ?>assets/images/right.svg" alt="Página siguiente">
+            </button>
+        </a>
+
+        <a href="<?=BASE_URL?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?=$totalPag?>" style="pointer-events: <?=($_SESSION['pag'] == $totalPag) ? 'none' : 'auto'?>;">
+            <button class="boton <?php if($_SESSION['pag'] == $totalPag) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/doubleright.png" alt="Última página" style="width: 10px; padding: 5px;">
             </button>
         </a>
 
@@ -257,7 +269,13 @@ if (isset($_GET['categoria'])) {
 
     <div class="paginacion" style="text-align: center; margin-top: 20px;">
 
-        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>">
+        <a href="<?=BASE_URL?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=1" style="pointer-events: <?=($_SESSION['pag'] == 1) ? 'none' : 'auto'?>;">
+            <button class="boton <?php if($_SESSION['pag'] == 1) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/doubleleft.png" alt="Primera página" style="width: 10px; padding: 5px;">
+            </button>
+        </a>
+
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $prev ?>" style="pointer-events: <?=($pag == 1) ? 'none' : 'auto'?>;">
             <button class="boton <?= ($pag == 1) ? 'disabled' : '' ?>">
                 <img src="<?= BASE_URL ?>assets/images/left.svg" alt="Página anterior">
             </button>
@@ -265,9 +283,15 @@ if (isset($_GET['categoria'])) {
 
         <h1>Pág. <?= $pag ?></h1>
 
-        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>">
+        <a href="<?= BASE_URL ?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?= $next ?>" style="pointer-events: <?=($pag == $totalPag) ? 'none' : 'auto'?>;">
             <button class="boton <?= ($pag == $totalPag) ? 'disabled' : '' ?>">
                 <img src="<?= BASE_URL ?>assets/images/right.svg" alt="Página siguiente">
+            </button>
+        </a>
+
+        <a href="<?=BASE_URL?>producto/recomendados&categoria=<?= $categoria->getId() ?>&pag=<?=$totalPag?>" style="pointer-events: <?=($_SESSION['pag'] == $totalPag) ? 'none' : 'auto'?>;">
+            <button class="boton <?php if($_SESSION['pag'] == $totalPag) echo 'disabled' ?>">
+                <img src="<?=BASE_URL?>assets/images/doubleright.png" alt="Última página" style="width: 10px; padding: 5px;">
             </button>
         </a>
         
