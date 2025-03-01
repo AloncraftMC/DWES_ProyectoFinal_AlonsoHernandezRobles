@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-02-2025 a las 23:18:35
+-- Tiempo de generación: 01-03-2025 a las 16:56:15
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.0.28
 
@@ -575,7 +575,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `apellidos`, `email`, `password`, `rol`, `imagen`) VALUES
-(1, 'Admin', 'Admin', 'admin@admin.com', '$2y$04$4vFxTqFBpdqIFKulS7.D0uuZlQGTMcrwgmCeCYpRdY28Qhqsnuzjq', 'admin', '1.png'),
+(1, 'Admin', 'Admin', 'admin@admin.com', '$2y$04$vEcnurG9V5x9fPJIYw2zfeTBFdEnueZi2UcYyBOK1ghjl9EE2hkFW', 'admin', '1.png'),
 (2, 'Alonso', 'Hernández Robles', 'alonso.ensibemol@gmail.com', '$2y$04$J/Q5vwYYc0FrlfDf1haToOUJZ/bzw.zYOY64gCri.k9Jhbqj.ofdG', 'user', '2.png');
 
 --
