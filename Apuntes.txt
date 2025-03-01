@@ -1,1 +1,6 @@
-1. Imágenes de usuario en Registrarse y Gestión
+Para el futuro por si me da por acabarlo:
+- Todo lo de pedidos
+- Al iniciar sesión por el botón del carrito, redirigir al producto en el que estaba (a veces no va)
+- Hacer simplemente más grande el width del carrusel para mejor UX
+- Mover el carrusel al botón de la categoría actual
+- Número personalizado en cualquier paginación
