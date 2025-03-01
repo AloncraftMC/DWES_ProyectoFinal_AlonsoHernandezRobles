@@ -70,10 +70,10 @@
                             <br>
                             <span style="font-size: 80%; opacity: 0.5">(-<?= $prod->getOferta() ?>%)</span>
                         <?php else: ?>
-                            <?= $prod->getPrecio() ?> €
+                            <span style="color: rgb(0, 0, 0); font-weight: bold;"><?= $prod->getPrecio() ?> €</span>
                         <?php endif; ?>
                     </td>
-                    <td><?= number_format($precioTotal, 2) ?> €</td>
+                    <td><?= $precioTotal ?> €</td>
                     <td class="acciones-especial">
                         <a href="<?= BASE_URL ?>carrito/delete&index=<?= $indice ?>" class="boton btn-delete">Eliminar</a>
                     </td>
@@ -83,7 +83,7 @@
     </table>
 
     <div class="resumen-carrito" style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin: 20px;">
-        <h2 style="color: green"><span style="color: black; font-weight: normal;">Total:</span> <?= number_format($totalCarrito, 2) ?> €</h2>
+        <h2 style="color: green"><span style="color: black; font-weight: normal;">Total:</span> <?= $totalCarrito ?> €</h2>
 
         <!-- Botón para proceder a la compra -->
         <a href="<?= BASE_URL ?>pedido/crear">

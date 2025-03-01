@@ -11,6 +11,7 @@
         public function recomendados(){
 
             Utils::deleteSession('redirect_after_login');
+            Utils::deleteSession('gestion');
 
             $productosPorPagina = PRODUCTS_PER_PAGE;
 

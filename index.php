@@ -114,7 +114,7 @@
 
     if(isset($_GET['controller'])){
 
-        $nombre_controlador = 'controllers\\' . $_GET['controller'] . 'Controller';
+        $nombre_controlador = 'controllers\\' . ucfirst($_GET['controller']) . 'Controller';
 
     }elseif(!isset($_GET['controller']) && !isset($_GET['action'])){
         

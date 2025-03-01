@@ -107,7 +107,7 @@
 
 <?php else: ?>
 
-    <strong class="yellow">Producto agotado</strong>
+    <strong class="yellow">Este producto está agotado.</strong>
 
 <?php endif; ?>
 

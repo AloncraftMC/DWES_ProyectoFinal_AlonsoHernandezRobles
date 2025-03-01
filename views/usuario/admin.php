@@ -8,6 +8,56 @@
     </button>
 </a>
 
+<div class="paginacion">
+
+    <?php if($totalPag > 1): ?>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=1" style="pointer-events: <?=($_SESSION['pag'] == 1) ? 'none' : 'auto'?>;">
+
+            <button class="boton <?php if($_SESSION['pag'] == 1) echo 'disabled' ?>">
+
+                <img src="<?=BASE_URL?>assets/images/doubleleft.png" alt="Primera página" style="width: 10px; padding: 5px;">
+
+            </button>
+
+        </a>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=<?= ($_SESSION['pag'] > 1) ? $_SESSION['pag'] - 1 : 1 ?>" style="pointer-events: <?=($_SESSION['pag'] == 1) ? 'none' : 'auto'?>;">
+            
+            <button class="boton <?php if($_SESSION['pag'] == 1) echo 'disabled' ?>">
+
+                <img src="<?=BASE_URL?>assets/images/left.svg" alt="Página anterior">
+
+            </button>
+
+        </a>
+
+        <h1>Pág. <?=$_SESSION['pag']?></h1>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=<?= ($_SESSION['pag'] < $totalPag) ? $_SESSION['pag'] + 1 : $totalPag ?>" style="pointer-events: <?=($_SESSION['pag'] == $totalPag) ? 'none' : 'auto'?>;">
+            
+            <button class="boton <?php if($_SESSION['pag'] == $totalPag) echo 'disabled' ?>">
+
+                <img src="<?=BASE_URL?>assets/images/right.svg" alt="Página siguiente">
+
+            </button>
+
+        </a>
+
+        <a href="<?=BASE_URL?>usuario/admin&pag=<?=$totalPag?>" style="pointer-events: <?=($_SESSION['pag'] == $totalPag) ? 'none' : 'auto'?>;">
+
+            <button class="boton <?php if($_SESSION['pag'] == $totalPag) echo 'disabled' ?>">
+
+                <img src="<?=BASE_URL?>assets/images/doubleright.png" alt="Última página" style="width: 10px; padding: 5px;">
+
+            </button>
+
+        </a>
+
+    <?php endif; ?>
+
+</div>
+
 <table>
 
     <tr>

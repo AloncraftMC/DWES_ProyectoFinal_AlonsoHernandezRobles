@@ -27,7 +27,7 @@
                 $this->contrasena = DB_PASSWORD;
                 $this->nombre = DB_NAME;
 
-                $this->conexion = new PDO("mysql:host=$this->servidor;dbname=$this->nombre", $this->usuario, $this->contrasena);
+                $this->conexion = new PDO("mysql:host=$this->servidor;dbname=$this->nombre;charset=utf8mb4", $this->usuario, $this->contrasena);
 
                 $this->conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                 $this->conexion->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);

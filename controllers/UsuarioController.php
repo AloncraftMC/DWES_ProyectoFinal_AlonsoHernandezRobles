@@ -135,6 +135,8 @@
                         
                         if (isset($_SESSION['admin'])) {
 
+                            $usuario = Usuario::getByEmail($email);
+
                             Utils::deleteSession('register');
                             header("Location:" . BASE_URL . "usuario/admin&pag=" . max(1, ceil(count(Usuario::getAll()) / ITEMS_PER_PAGE)) . "#" . $usuario->getId()); // Redirigir a la última página
                         
@@ -328,6 +330,8 @@
             Utils::deleteSession('admin');
             Utils::deleteSession('admin_popup');
             Utils::deleteSession('carrito');
+            Utils::deleteSession('gestion');
+            Utils::deleteCookieCarrito();
 
             if (isset($_COOKIE['recuerdame'])) {
                 setcookie('recuerdame', '', time() - 1);

@@ -80,6 +80,8 @@
                 
                 if($_SESSION['create'] == 'complete'){
 
+                    $categoria->setId(Categoria::getLastId());
+
                     Utils::deleteSession('form_data');
                     header("Location:" . BASE_URL . "categoria/admin&pag=" . max(1, ceil(count(Categoria::getAll()) / ITEMS_PER_PAGE)) . "#" . $categoria->getId()); // Redirigimos a la última página
                     exit;

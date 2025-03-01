@@ -87,7 +87,7 @@
         </div>
 
         <div style="margin-top: 30px; display: flex; flex-direction: column; justify-content: center; align-items: center; width: 100%;">
-            <img style="display: block; min-height: 100px; max-height: 100px; border-radius: 5px; margin-bottom: 15px;" id="imagen-preview" src="<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>" alt="Vista previa de la imagen">
+            <img style="display: block; min-height: 100px; max-height: 100px; border-radius: 5px; margin-bottom: 15px; max-width: 500px;" id="imagen-preview" src="<?=BASE_URL?>assets/images/uploads/usuarios/<?=$usuario->getImagen()?>" alt="Vista previa de la imagen">
             <button id="eliminar-imagen" type="button" class="delete-image">
                 Eliminar imagen
             </button>

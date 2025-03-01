@@ -140,6 +140,24 @@
             
         }
 
+        /* Método auxiliar */
+
+        public static function getLastId(): int {
+
+            $baseDatos = new BaseDatos();
+
+            $baseDatos->ejecutar("SELECT MAX(id) AS id FROM categorias");
+
+            $registro = $baseDatos->getSiguienteRegistro();
+
+            $id = $registro['id'];
+
+            $baseDatos->cerrarConexion();
+
+            return $id;
+
+        }
+
     }
 
 ?>
