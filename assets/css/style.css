@@ -695,7 +695,7 @@ table {
 .carousel-container {
     position: relative;
     width: 100%;
-    max-width: 800px;
+    max-width: 1300px;
     margin: auto;
     display: flex;
     align-items: center;
